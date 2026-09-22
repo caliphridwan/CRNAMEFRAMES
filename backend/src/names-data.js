@@ -6,7 +6,7 @@ const NAME_DB = [
   { name: "Fatimah", arabic: "فَاطِمَةُ", meaning: "Purified Woman, Daughter of Prophet Muhammad (SAW)" },
   { name: "Rahma", arabic: "رَحْمَةُ", meaning: "Mercy, Compassion from Allah" },
   { name: "Muhammad", arabic: "مُحَمَّدٌ", meaning: "The Praised One" },
-  { name: "Aisha", arabic: "عَائِشَةُ", meaning: "She Who Lives, Full of Life" },
+  { name: "Aisha", arabic: "عَائِشَةُ", meaning: "She Who Lives, Full of Life, Prophet Muhammad (SAW)'s lovely wife" },
   { name: "Ibrahim", arabic: "إِبْرَاهِيمُ", meaning: "Father of Nations, the Friend of Allah" },
   { name: "Yusuf", arabic: "يُوسُفُ", meaning: "God Increases, the Beautiful One" },
   { name: "Maryam", arabic: "مَرْيَمُ", meaning: "The Beloved, Mother of Prophet Isa" },
@@ -46,7 +46,14 @@ const NAME_DB = [
   { name: "Sadiq", arabic: "صَادِقٌ", meaning: "Truthful, Sincere" },
   { name: "Jamila", arabic: "جَمِيلَةُ", meaning: "Beautiful" },
   { name: "Bashir", arabic: "بَشِيرٌ", meaning: "Bringer of Good News" },
-  { name: "Ganiyu", arabic: "عَبْدُ الْغَنِيِّ", meaning: "Servant of the Wealthy One" }
+  { name: "Ganiyu", arabic: "عَبْدُ الْغَنِيِّ", meaning: "Servant of the Wealthy One" },
+  { name: "Qudrah", arabic: "قدرة", meaning: "Power, Ability, Capacity of a woman" },
+  { name: "Idris", arabic: " إدريس", meaning: "One Who Instructs, Interpreter, Prophet of Allah " },
+  { name: "Mansur", arabic: "منصور", meaning: "Triumphant, Aided by Allah, the Victorious one" },
+  { name: "Habeebat", arabic: "حبيبة", meaning: "Darling, Beloved, Dear One" },
+  { name: "Habeeb", arabic: "حبيب", meaning: "Darling, Beloved, Dear One" },
+  { name: "Barakat", arabic: "بَرَكَة", meaning: "Abundant Blessings,continuous prosperity" },
+  { name: "Mubarak", arabic: "مبارك", meaning: "Abundant Blessings,continuous prosperity" },
 ];
 
 module.exports = { NAME_DB };
