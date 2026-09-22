@@ -1,0 +1,45 @@
+# Render Blueprint — deploys CR-Frames as a single Web Service.
+# The backend serves the frontend itself (see backend/server.js), so this
+# one service is the whole app: visiting its URL shows the storefront,
+# and it also exposes /api/* for orders, names, and payments.
+#
+# To use: push this repo to GitHub, then in the Render dashboard choose
+# "New +" -> "Blueprint" and point it at the repo. Render reads this file
+# automatically. Secrets marked "sync: false" must be filled in by hand
+# in the Render dashboard after the first deploy — they're intentionally
+# left out of this file so they never end up committed to git.
+
+services:
+  - type: web
+    name: cr-frames
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: ADMIN_NOTIFY_EMAIL
+        sync: false

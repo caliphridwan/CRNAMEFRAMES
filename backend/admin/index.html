@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-Frames — Admin</title>
+<style>
+  :root{
+    --ivory:#F7F3EA; --card:#FCFAF4; --green:#173A2E; --green-soft:#2C5340;
+    --gold:#AD8A3D; --ink:#2A251E; --ink-soft:#5B5346; --line:#DCD0B5; --error:#9A3B2E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px;}
+  header{background:var(--green);color:var(--ivory);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  header h1{font-size:18px;margin:0;font-weight:700;}
+  header .sub{font-size:12px;opacity:.75;margin-top:2px;}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px;}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
+  .toolbar input[type="search"]{
+    flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;background:#fff;
+  }
+  button{font-family:inherit;cursor:pointer;}
+  .btn{background:var(--green);color:var(--ivory);border:none;border-radius:6px;padding:9px 16px;font-size:13px;font-weight:600;}
+  .btn:hover{background:var(--green-soft);}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 16px;min-width:110px;}
+  .stat .n{font-size:20px;font-weight:700;color:var(--green);}
+  .stat .l{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{background:#F0E9D8;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  tr:last-child td{border-bottom:none;}
+  .ref{font-weight:700;color:var(--green);font-family:monospace;font-size:12.5px;}
+  .date{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+  .items-list{margin:0;padding:0;list-style:none;font-size:12.5px;}
+  .items-list li{margin-bottom:3px;}
+  .items-list .tag{color:var(--gold);font-size:10.5px;}
+  .total{font-weight:700;color:var(--green);}
+  select.status{
+    padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;background:#fff;font-weight:600;
+  }
+  .status-pending_payment{color:#9a7523;}
+  .status-paid{color:#1d6b46;}
+  .status-in_production{color:#1d5c8a;}
+  .status-shipped{color:#6a3fa0;}
+  .status-completed{color:var(--green);}
+  .status-failed{color:var(--error);}
+  .empty, .loading, .auth-error{text-align:center;padding:60px 20px;color:var(--ink-soft);}
+  .customer-name{font-weight:600;}
+  .customer-meta{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  @media (max-width:900px){
+    table, thead, tbody, th, td, tr{display:block;}
+    thead{display:none;}
+    tr{border-bottom:1px solid var(--line);padding:10px 0;}
+    td{border:none;padding:4px 0;}
+    td::before{content:attr(data-label);display:block;font-size:10px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.05em;margin-bottom:2px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>CR-Frames — Orders</h1>
+    <div class="sub" id="headerSub">Loading…</div>
+  </div>
+  <button class="btn" id="refreshBtn">Refresh</button>
+</header>
+
+<div class="wrap">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <input type="search" id="searchInput" placeholder="Search by reference, name, or phone…">
+  </div>
+  <div id="tableWrap">
+    <div class="loading">Loading orders…</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STATUS_OPTIONS = ["pending_payment", "paid", "in_production", "shipped", "completed", "failed"];
+  var STATUS_LABELS = {
+    pending_payment: "Pending payment", paid: "Paid", in_production: "In production",
+    shipped: "Shipped", completed: "Completed", failed: "Failed"
+  };
+  var STYLE_LABELS = { arabic_only: "Arabic only", arabic_and_meaning: "Arabic + meaning" };
+  var COLOR_LABELS = { white: "White", gold: "Royal Gold", black: "Black", brown: "Brown", green: "Green" };
+
+  var allOrders = [];
+  var tableWrap = document.getElementById("tableWrap");
+  var statsEl = document.getElementById("stats");
+  var headerSub = document.getElementById("headerSub");
+  var searchInput = document.getElementById("searchInput");
+  var refreshBtn = document.getElementById("refreshBtn");
+
+  function ngn(n){ return "₦" + Number(n || 0).toLocaleString("en-NG"); }
+  function fmtDate(iso){
+    if(!iso) return "";
+    var d = new Date(iso);
+    return d.toLocaleDateString("en-NG", {day:"numeric", month:"short", year:"numeric"}) +
+      " · " + d.toLocaleTimeString("en-NG", {hour:"2-digit", minute:"2-digit"});
+  }
+
+  function loadOrders(){
+    tableWrap.innerHTML = '<div class="loading">Loading orders…</div>';
+    fetch("/api/admin/orders")
+      .then(function(resp){
+        if(resp.status === 401){ throw new Error("auth"); }
+        if(!resp.ok){ throw new Error("failed"); }
+        return resp.json();
+      })
+      .then(function(data){
+        allOrders = data.orders || [];
+        headerSub.textContent = allOrders.length + " order" + (allOrders.length === 1 ? "" : "s") + " total";
+        renderStats();
+        renderTable(allOrders);
+      })
+      .catch(function(err){
+        if(err.message === "auth"){
+          tableWrap.innerHTML = '<div class="auth-error">Session expired — refresh the page and sign in again.</div>';
+        } else {
+          tableWrap.innerHTML = '<div class="auth-error">Couldn\'t load orders. Check the server is running and try again.</div>';
+        }
+      });
+  }
+
+  function renderStats(){
+    var counts = {};
+    STATUS_OPTIONS.forEach(function(s){ counts[s] = 0; });
+    allOrders.forEach(function(o){ counts[o.status] = (counts[o.status] || 0) + 1; });
+    var revenue = allOrders.filter(function(o){ return o.status !== "pending_payment" && o.status !== "failed"; })
+      .reduce(function(sum, o){ return sum + o.totalAmount; }, 0);
+
+    statsEl.innerHTML =
+      statCard(allOrders.length, "Total orders") +
+      statCard(counts.pending_payment, "Pending payment") +
+      statCard(counts.paid, "Paid") +
+      statCard(counts.in_production, "In production") +
+      statCard(counts.shipped, "Shipped") +
+      statCard(ngn(revenue), "Revenue collected");
+  }
+  function statCard(n, label){
+    return '<div class="stat"><div class="n">'+n+'</div><div class="l">'+label+'</div></div>';
+  }
+
+  function renderTable(orders){
+    if(orders.length === 0){
+      tableWrap.innerHTML = '<div class="empty">No orders yet.</div>';
+      return;
+    }
+    var rows = orders.map(function(o){
+      var itemsHtml = o.items.map(function(i){
+        var style = STYLE_LABELS[i.style] || i.style;
+        var color = COLOR_LABELS[i.color] || i.color || "White";
+        return '<li>'+i.name+' <span class="tag">('+style+', '+color+')</span></li>';
+      }).join("");
+
+      var statusOptionsHtml = STATUS_OPTIONS.map(function(s){
+        return '<option value="'+s+'"'+(s === o.status ? " selected" : "")+'>'+STATUS_LABELS[s]+'</option>';
+      }).join("");
+
+      return '<tr data-ref="'+o.reference+'">'+
+        '<td data-label="Order"><div class="ref">'+o.reference+'</div><div class="date">'+fmtDate(o.createdAt)+'</div></td>'+
+        '<td data-label="Customer"><div class="customer-name">'+o.customer.fullName+'</div>'+
+          '<div class="customer-meta">'+o.customer.phone+(o.customer.email ? " · "+o.customer.email : "")+'</div>'+
+          '<div class="customer-meta">'+o.customer.address+', '+o.customer.city+'</div></td>'+
+        '<td data-label="Items"><ul class="items-list">'+itemsHtml+'</ul></td>'+
+        '<td data-label="Total"><span class="total">'+ngn(o.totalAmount)+'</span>'+
+          (o.discount ? '<div class="customer-meta" style="color:#AD8A3D;">Bundle: −'+ngn(o.discount)+'</div>' : '')+
+        '</td>'+
+        '<td data-label="Status"><select class="status status-'+o.status+'" data-ref="'+o.reference+'">'+statusOptionsHtml+'</select></td>'+
+      '</tr>';
+    }).join("");
+
+    tableWrap.innerHTML =
+      '<table><thead><tr>'+
+        '<th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th>'+
+      '</tr></thead><tbody>'+rows+'</tbody></table>';
+
+    Array.prototype.forEach.call(tableWrap.querySelectorAll(".status"), function(sel){
+      sel.addEventListener("change", function(){
+        var ref = sel.getAttribute("data-ref");
+        var newStatus = sel.value;
+        sel.disabled = true;
+        fetch("/api/admin/orders/" + encodeURIComponent(ref), {
+          method: "PATCH",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({status: newStatus})
+        }).then(function(resp){
+          if(!resp.ok) throw new Error("failed");
+          return resp.json();
+        }).then(function(data){
+          var order = allOrders.find(function(o){ return o.reference === ref; });
+          if(order) order.status = data.order.status;
+          sel.className = "status status-" + newStatus;
+          renderStats();
+        }).catch(function(){
+          alert("Couldn't update status — please try again.");
+          sel.value = allOrders.find(function(o){ return o.reference === ref; }).status;
+        }).finally(function(){
+          sel.disabled = false;
+        });
+      });
+    });
+  }
+
+  searchInput.addEventListener("input", function(){
+    var q = searchInput.value.trim().toLowerCase();
+    if(!q){ renderTable(allOrders); return; }
+    var filtered = allOrders.filter(function(o){
+      return o.reference.toLowerCase().indexOf(q) !== -1 ||
+        o.customer.fullName.toLowerCase().indexOf(q) !== -1 ||
+        o.customer.phone.toLowerCase().indexOf(q) !== -1;
+    });
+    renderTable(filtered);
+  });
+
+  refreshBtn.addEventListener("click", loadOrders);
+
+  loadOrders();
+})();
+</script>
+</body>
+</html>

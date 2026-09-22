@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-Frames — Name Frames, Framed with Meaning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Frontend (Vercel) and backend (Render/Railway) live on different
+  // domains in production, so the page needs to be told where the API is.
+  // Leave as "" for local dev (backend serves this page itself, same origin).
+  // After deploying the backend, set this to its real URL, e.g.:
+  //   window.CR_FRAMES_API_BASE = "https://cr-frames-api.onrender.com";
+  window.CR_FRAMES_API_BASE = "";
+</script>
+<style>
+  :root{
+    --ivory:#F7F3EA;
+    --ivory-deep:#EFE8D9;
+    --card:#FCFAF4;
+    --green:#173A2E;
+    --green-soft:#2C5340;
+    --gold:#AD8A3D;
+    --gold-light:#D8C08A;
+    --ink:#2A251E;
+    --ink-soft:#5B5346;
+    --line:#DCD0B5;
+    --rose:#E7DCCB;
+    --error:#9A3B2E;
+    --radius-sm:4px;
+    --radius-md:8px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  h1,h2,h3{font-family:'Playfair Display',serif;margin:0;font-weight:600;}
+  .serif-italic{font-family:'Cormorant Garamond',serif;font-style:italic;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  /* ---------- ornament dividers ---------- */
+  .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:18px 0;}
+  .divider .stem{height:1px;width:64px;background:var(--gold);opacity:.55;}
+  .divider .dots{display:flex;gap:5px;}
+  .divider .dots span{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.7;}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(247,243,234,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;max-width:var(--maxw);margin:0 auto;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--gold);font-family:'Playfair Display',serif;font-size:16px;
+  }
+  .brand-name{font-family:'Playfair Display',serif;font-size:19px;letter-spacing:.02em;color:var(--green);}
+  .brand-name small{display:block;font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);font-weight:500;}
+  .nav-links{display:flex;align-items:center;gap:28px;}
+  .nav-links a{font-size:14px;text-decoration:none;color:var(--ink-soft);transition:color .15s;}
+  .nav-links a:hover{color:var(--green);}
+  .cart-btn{
+    position:relative;background:none;border:1px solid var(--green);color:var(--green);
+    border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;gap:7px;transition:background .15s,color .15s;
+  }
+  .cart-btn:hover{background:var(--green);color:var(--ivory);}
+  .cart-count{
+    background:var(--gold);color:#fff;font-size:11px;font-weight:700;
+    border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 2px;
+  }
+  @media (max-width:720px){ .nav-links a:not(.cart-only){display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 40px;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;gap:40px;} }
+  .eyebrow-plain{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--gold);margin-bottom:14px;}
+  .hero h1{font-size:clamp(34px,4.6vw,52px);line-height:1.12;color:var(--green);}
+  .hero p.lead{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--ink-soft);max-width:46ch;margin-top:18px;line-height:1.5;}
+  .hero-ctas{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    padding:14px 26px;border-radius:2px;font-size:14.5px;font-weight:600;cursor:pointer;
+    text-decoration:none;border:1px solid transparent;transition:transform .15s, box-shadow .15s, background .15s, color .15s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--green);color:var(--ivory);}
+  .btn-primary:hover{background:var(--green-soft);}
+  .btn-outline{background:transparent;border-color:var(--green);color:var(--green);}
+  .btn-outline:hover{background:var(--green);color:var(--ivory);}
+  .btn-gold{background:var(--gold);color:#fff;}
+  .btn-gold:hover{background:#96762f;}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;}
+  .btn-full{width:100%;}
+
+  /* arch frame illustration */
+  .arch-shell{
+    position:relative;background:linear-gradient(180deg,#fff,#F2ECDD);
+    border-radius:160px 160px 6px 6px / 110px 110px 6px 6px;
+    padding:4px;
+    box-shadow:0 30px 60px -30px rgba(23,58,46,.35);
+  }
+  .arch-inner{
+    border:1px solid var(--gold-light);
+    border-radius:156px 156px 4px 4px / 106px 106px 4px 4px;
+    padding:52px 30px 34px;text-align:center;background:var(--card);
+    position:relative;overflow:hidden;
+  }
+  .arch-inner::before,.arch-inner::after{
+    content:"";position:absolute;top:20px;bottom:20px;width:34px;
+    background-image:repeating-linear-gradient(180deg,var(--rose) 0 10px, transparent 10px 14px);
+    opacity:.5;
+  }
+  .arch-inner::before{left:14px;}
+  .arch-inner::after{right:14px;}
+
+  /* frame colour variants — outer shell colour changes, inner mat stays consistent */
+  .arch-shell.color-white{background:linear-gradient(180deg,#fff,#F2ECDD);}
+  .arch-shell.color-gold{background:linear-gradient(160deg,#E7C669,#9A7523);}
+  .arch-shell.color-black{background:linear-gradient(160deg,#333333,#0a0a0a);}
+  .arch-shell.color-brown{background:linear-gradient(160deg,#8a5a34,#3f2916);}
+  .arch-shell.color-green{background:linear-gradient(160deg,#1d4433,#0e2b20);}
+  .arch-shell.color-gold .arch-inner,
+  .arch-shell.color-black .arch-inner,
+  .arch-shell.color-brown .arch-inner,
+  .arch-shell.color-green .arch-inner{border-color:#D8BC72;}
+  .arch-arabic{font-size:44px;color:var(--gold);margin-bottom:8px;line-height:1;}
+  .arch-name{font-family:'Playfair Display',serif;font-weight:700;font-size:30px;letter-spacing:.03em;color:var(--green);text-transform:uppercase;}
+  .arch-meaning{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink-soft);margin-top:14px;line-height:1.45;max-width:26ch;margin-left:auto;margin-right:auto;}
+  .arch-brandline{margin-top:24px;font-size:10px;letter-spacing:.22em;color:var(--gold);font-weight:600;}
+
+  /* ---------- section shell ---------- */
+  section{padding:60px 0;}
+  .section-head{text-align:center;max-width:600px;margin:0 auto 40px;}
+  .section-head h2{font-size:clamp(26px,3vw,34px);color:var(--green);}
+  .section-head p{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink-soft);margin-top:10px;}
+  .bundle-promo{
+    font-family:'Inter',sans-serif !important;font-size:13px !important;font-weight:700;
+    color:var(--gold);background:var(--ivory-deep);display:inline-block;
+    padding:6px 16px;border-radius:999px;margin-top:12px !important;border:1px solid var(--gold-light);
+  }
+
+  /* ---------- occasions band ---------- */
+  .occasions{
+    padding:40px 0 48px;background:var(--green);
+    border-top:1px solid var(--gold-light);border-bottom:1px solid var(--gold-light);
+  }
+  .occasions-statement{
+    text-align:center;max-width:760px;margin:0 auto 26px;
+    font-family:'Playfair Display',serif;font-size:clamp(19px,2.6vw,26px);
+    line-height:1.5;color:var(--ivory);font-weight:500;
+  }
+  .occasions-statement strong{color:var(--gold-light);font-weight:700;}
+  .br-desktop{display:block;}
+  @media (max-width:640px){ .br-desktop{display:none;} }
+  .occasion-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;}
+  .occasion-tag{
+    font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--ivory);
+    border:1px solid rgba(216,188,114,.55);border-radius:999px;padding:8px 18px;
+    background:rgba(255,255,255,.04);
+  }
+
+  /* ---------- gallery slider ---------- */
+  .slider-wrap{position:relative;}
+  .slider-track{
+    display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;
+    padding:6px 4px 22px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;scrollbar-color:var(--gold-light) transparent;
+  }
+  .slider-track::-webkit-scrollbar{height:6px;}
+  .slider-track::-webkit-scrollbar-thumb{background:var(--gold-light);border-radius:3px;}
+  .slide{flex:0 0 auto;width:230px;scroll-snap-align:start;}
+  @media (max-width:520px){ .slide{width:198px;} }
+
+  .mini-arch{
+    position:relative;border-radius:80px 80px 5px 5px / 56px 56px 5px 5px;padding:4px;
+    box-shadow:0 18px 34px -18px rgba(23,58,46,.4);
+  }
+  .mini-arch.ivory{background:linear-gradient(180deg,#fff,#F2ECDD);}
+  .mini-arch.emerald{background:linear-gradient(160deg,#0e2b20,#1d4433);}
+  .mini-arch-inner{
+    position:relative;
+    border-radius:76px 76px 3px 3px / 52px 52px 3px 3px;
+    padding:34px 16px 22px;text-align:center;background:#FBF9F3;
+  }
+  .mini-arch.ivory .mini-arch-inner{border:1px solid var(--gold-light);}
+  .mini-arch.emerald .mini-arch-inner{border:1px solid #C9A94E;}
+  /* small gold diamond corner accents to echo the emerald frame's motif */
+  .mini-arch.emerald::before,.mini-arch.emerald::after{
+    content:"";position:absolute;width:9px;height:9px;background:var(--gold);
+    transform:rotate(45deg);top:10px;
+  }
+  .mini-arch.emerald::before{left:10px;}
+  .mini-arch.emerald::after{right:10px;}
+
+  /* decorative rose clusters in the lower corners — echoes the rose
+     garlands from the reference frame designs, in miniature. */
+  .mini-flower{position:absolute;bottom:5px;width:25px;height:25px;opacity:.92;pointer-events:none;}
+  .mini-flower svg{width:100%;height:100%;display:block;}
+  .mini-flower-left{left:3px;}
+  .mini-flower-right{right:3px;transform:scaleX(-1);}
+
+  .mini-arch-arabic{font-size:26px;color:var(--gold);margin-bottom:6px;line-height:1;}
+  .mini-arch-name{font-family:'Playfair Display',serif;font-weight:700;font-size:17px;letter-spacing:.02em;color:var(--green);text-transform:uppercase;}
+  .mini-arch-meaning{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4;}
+  .mini-arch-style-tag{
+    display:inline-block;margin-top:12px;font-size:9.5px;letter-spacing:.12em;font-weight:700;
+    color:var(--gold);border-top:1px solid var(--gold-light);padding-top:8px;
+  }
+
+  .slider-nav{
+    position:absolute;top:44%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;
+    background:var(--card);border:1px solid var(--line);color:var(--green);font-size:16px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;
+    box-shadow:0 8px 18px -10px rgba(0,0,0,.3);transition:background .15s;
+  }
+  .slider-nav:hover{background:var(--ivory-deep);}
+  .slider-prev{left:-6px;}
+  .slider-next{right:-6px;}
+  @media (max-width:720px){ .slider-nav{display:none;} }
+
+  .slider-dots{display:flex;justify-content:center;gap:7px;margin-top:4px;}
+  .slider-dot{width:6px;height:6px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer;}
+  .slider-dot.active{background:var(--gold);}
+
+  /* ---------- order builder ---------- */
+  .builder{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);
+    display:grid;grid-template-columns:.9fr 1.1fr;gap:0;overflow:hidden;
+  }
+  @media (max-width:860px){.builder{grid-template-columns:1fr;}}
+  .builder-preview{
+    background:var(--ivory-deep);padding:44px 28px;display:flex;align-items:center;justify-content:center;
+    border-right:1px solid var(--line);
+  }
+  @media (max-width:860px){.builder-preview{border-right:none;border-bottom:1px solid var(--line);}}
+  .builder-form{padding:36px 34px;}
+  .field{margin-bottom:20px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px;}
+  .field .hint{font-size:12.5px;color:var(--ink-soft);margin-top:6px;}
+  .input, textarea, select{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:#fff;font-size:14.5px;color:var(--ink);font-family:'Inter',sans-serif;
+  }
+  .input:focus, textarea:focus, select:focus{border-color:var(--gold);}
+  .autocomplete{position:relative;}
+  .ac-list{
+    position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius-sm);max-height:220px;overflow-y:auto;z-index:20;box-shadow:0 12px 24px -12px rgba(0,0,0,.2);
+  }
+  .ac-item{padding:10px 14px;cursor:pointer;font-size:14px;display:flex;justify-content:space-between;gap:10px;}
+  .ac-item:hover, .ac-item.active{background:var(--ivory-deep);}
+  .ac-item .m{color:var(--ink-soft);font-size:12.5px;font-family:'Cormorant Garamond',serif;font-style:italic;}
+  .ac-empty{padding:10px 14px;font-size:13px;color:var(--ink-soft);}
+  .price-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:18px;border-top:1px dashed var(--line);margin-top:6px;
+  }
+  .price-row .amt{font-family:'Playfair Display',serif;font-size:22px;color:var(--green);}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--gold);
+    border:1px solid var(--gold-light);border-radius:999px;padding:3px 10px;margin-bottom:14px;
+  }
+  .style-toggle{display:flex;gap:8px;flex-wrap:wrap;}
+  .style-opt{
+    display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;
+    padding:8px 14px;font-size:13px;cursor:pointer;flex:1;justify-content:center;transition:border-color .15s,background .15s;
+  }
+  .style-opt input{accent-color:var(--gold);margin:0;}
+  .style-opt:has(input:checked){border-color:var(--gold);background:var(--ivory-deep);font-weight:600;}
+  .lookup-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+  .lookup-btn{
+    background:none;border:1px solid var(--gold-light);color:var(--gold);border-radius:999px;
+    font-size:12px;font-weight:600;padding:5px 12px;cursor:pointer;white-space:nowrap;transition:background .15s;
+  }
+  .lookup-btn:hover{background:var(--ivory-deep);}
+  .lookup-btn[disabled]{opacity:.55;cursor:wait;}
+  .form-msg{font-size:13px;margin-top:10px;min-height:18px;}
+  .form-msg.error{color:var(--error);}
+  .form-msg.ok{color:var(--green-soft);}
+
+  /* names-in-cart mini list on builder */
+  .queued-note{font-size:13px;color:var(--ink-soft);margin-top:16px;}
+  .queued-note strong{color:var(--green);}
+
+  /* ---------- how it works ---------- */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  @media (max-width:860px){.steps{grid-template-columns:1fr 1fr;}}
+  @media (max-width:500px){.steps{grid-template-columns:1fr;}}
+  .step{text-align:left;}
+  .step .num{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold);border-bottom:1px solid var(--gold-light);display:inline-block;padding-bottom:4px;margin-bottom:12px;}
+  .step h3{font-size:17px;color:var(--green);margin-bottom:6px;}
+  .step p{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:40px 0 28px;background:var(--ivory-deep);}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px;}
+  .foot-brand p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-soft);font-size:15px;margin-top:6px;max-width:34ch;}
+  .foot-meta{font-size:13px;color:var(--ink-soft);}
+  .foot-bottom{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  /* ---------- cart drawer ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(23,20,14,.4);z-index:90;
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--ivory);z-index:100;
+    box-shadow:-24px 0 48px -20px rgba(0,0,0,.3);
+    transform:translateX(100%);transition:transform .3s ease;
+    display:flex;flex-direction:column;
+  }
+  .drawer.show{transform:translateX(0);}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--line);}
+  .drawer-head h2{font-size:20px;color:var(--green);}
+  .icon-btn{background:none;border:none;cursor:pointer;font-size:22px;color:var(--ink-soft);line-height:1;padding:4px;}
+  .icon-btn:hover{color:var(--green);}
+  .drawer-body{flex:1;overflow-y:auto;padding:16px 24px;}
+  .cart-item{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);}
+  .cart-item .ci-arabic{color:var(--gold);font-size:20px;width:44px;flex-shrink:0;text-align:center;}
+  .cart-item .ci-info{flex:1;min-width:0;}
+  .cart-item .ci-name{font-family:'Playfair Display',serif;font-weight:700;color:var(--green);font-size:15px;text-transform:uppercase;letter-spacing:.02em;}
+  .cart-item .ci-meaning{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--ink-soft);margin-top:2px;}
+  .cart-item .ci-price{font-size:13px;color:var(--ink-soft);margin-top:6px;}
+  .ci-remove{background:none;border:none;color:var(--error);font-size:12.5px;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline;}
+  .cart-empty{text-align:center;padding:60px 10px;color:var(--ink-soft);}
+  .cart-empty .arabic{font-size:34px;color:var(--gold-light);margin-bottom:14px;}
+  .drawer-foot{border-top:1px solid var(--line);padding:20px 24px 24px;}
+  .drawer-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .drawer-total .lbl{font-size:14px;color:var(--ink-soft);}
+  .drawer-total .val{font-family:'Playfair Display',serif;font-size:24px;color:var(--green);}
+
+  /* ---------- modal (checkout / payment / confirmation) ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(23,20,14,.5);z-index:110;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .modal-overlay.show{opacity:1;pointer-events:auto;}
+  .modal{
+    background:var(--ivory);border-radius:var(--radius-md);max-width:520px;width:100%;
+    max-height:88vh;overflow-y:auto;position:relative;
+    border:1px solid var(--line);
+  }
+  .modal-head{padding:26px 30px 0;}
+  .modal-head h2{font-size:22px;color:var(--green);}
+  .modal-close{position:absolute;top:16px;right:18px;}
+  .modal-body{padding:20px 30px 30px;}
+  .step-track{display:flex;gap:6px;padding:0 30px;margin-top:14px;}
+  .step-track .tick{height:3px;flex:1;background:var(--line);border-radius:2px;}
+  .step-track .tick.done{background:var(--gold);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:480px){.row2{grid-template-columns:1fr;}}
+  .summary-line{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line);color:var(--ink-soft);}
+  .summary-line .n{color:var(--ink);}
+  .summary-total{display:flex;justify-content:space-between;padding-top:14px;margin-top:6px;}
+  .summary-total .lbl{font-weight:600;color:var(--ink);}
+  .summary-total .val{font-family:'Playfair Display',serif;font-size:22px;color:var(--green);}
+  .pay-mock{
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:22px;text-align:center;background:#fff;margin-top:18px;
+  }
+  .pay-mock .plogo{font-family:'Playfair Display',serif;font-weight:700;color:var(--green);font-size:16px;margin-bottom:4px;}
+  .pay-mock .psub{font-size:12.5px;color:var(--ink-soft);margin-bottom:18px;}
+  .spinner{
+    width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;
+    margin:0 auto 14px;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .confirm-icon{
+    width:56px;height:56px;border-radius:50%;background:var(--green);color:var(--ivory);
+    display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 18px;
+  }
+  .ref-box{background:var(--ivory-deep);border:1px dashed var(--gold-light);border-radius:var(--radius-sm);padding:14px 18px;text-align:center;margin:18px 0;}
+  .ref-box .lbl{font-size:11.5px;letter-spacing:.1em;color:var(--ink-soft);}
+  .ref-box .ref{font-family:'Playfair Display',serif;font-size:19px;color:var(--green);margin-top:4px;}
+  .integration-note{
+    font-size:12px;color:var(--ink-soft);background:var(--ivory-deep);border-radius:var(--radius-sm);
+    padding:10px 14px;margin-top:16px;line-height:1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#top">
+      <span class="brand-mark">CR</span>
+      <span class="brand-name">CR-Frames<small>CALIPH · RIDWAN</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#gallery">Gallery</a>
+      <a href="#order">Order</a>
+      <a href="#how">How it works</a>
+      <button class="cart-btn cart-only" id="openCartBtn" aria-haspopup="dialog">
+        Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow-plain">Handframed, name by name</div>
+        <h1>A name is a prayer.<br>We frame it in gold.</h1>
+        <p class="lead">Order a custom name frame — Arabic calligraphy, English meaning, and archway design — for anyone whose name deserves a wall of its own.</p>
+        <div class="hero-ctas">
+          <a href="#order" class="btn btn-primary">Start an order</a>
+          <a href="#gallery" class="btn btn-outline">See sample frames</a>
+        </div>
+      </div>
+      <div class="arch-shell">
+        <div class="arch-inner">
+          <div class="arch-arabic">لُقْمَانُ</div>
+          <div class="arch-name">Luqman</div>
+          <div class="arch-meaning">The Wise Man, Blessed with Wisdom</div>
+          <div class="divider"><span class="stem"></span><span class="dots"><span></span><span></span><span></span></span><span class="stem"></span></div>
+          <div class="arch-brandline">CALIPH · RIDWAN</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OCCASIONS -->
+  <section class="occasions">
+    <div class="wrap">
+      <p class="occasions-statement">Made for the moments that deserve a wall of their own —<br class="br-desktop"><strong>weddings, gifts, birthdays, naming ceremonies, offices, and personal workspaces.</strong></p>
+      <div class="occasion-tags">
+        <span class="occasion-tag">Weddings</span>
+        <span class="occasion-tag">Gifts</span>
+        <span class="occasion-tag">Birthdays</span>
+        <span class="occasion-tag">Naming Ceremonies</span>
+        <span class="occasion-tag">Offices</span>
+        <span class="occasion-tag">Personal Workspaces</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Every name has a story</h2>
+        <p>A few names from frames we've made — in both our Ivory Classic and Emerald Gold styles. Search for yours in the order builder below.</p>
+      </div>
+      <div class="slider-wrap">
+        <button class="slider-nav slider-prev" id="sliderPrev" aria-label="Previous frames">‹</button>
+        <div class="slider-track" id="galleryStrip"></div>
+        <button class="slider-nav slider-next" id="sliderNext" aria-label="Next frames">›</button>
+      </div>
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+  </section>
+
+  <!-- ORDER BUILDER -->
+  <section id="order">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Build your order</h2>
+        <p>Add as many names as you like — ₦20,000 per name. Each one becomes its own frame.</p>
+        <p class="bundle-promo">🎉 Bundle deal: any 3 names for ₦50,000 — save ₦10,000</p>
+      </div>
+
+      <div class="builder">
+        <div class="builder-preview">
+          <div class="arch-shell color-white" id="previewArchShell" style="width:100%;max-width:300px;">
+            <div class="arch-inner" style="padding:38px 20px 26px;">
+              <div class="arch-arabic" id="prevArabic">؟</div>
+              <div class="arch-name" id="prevName">Your name</div>
+              <div class="arch-meaning" id="prevMeaning">Its meaning will appear here</div>
+              <div class="divider"><span class="stem"></span><span class="dots"><span></span><span></span><span></span></span><span class="stem"></span></div>
+              <div class="arch-brandline">CALIPH · RIDWAN</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="builder-form">
+          <span class="badge">₦20,000 per name</span>
+          <div class="field autocomplete">
+            <label for="nameInput">Name</label>
+            <input type="text" id="nameInput" class="input" placeholder="Start typing a name — e.g. Fatimah" autocomplete="off">
+            <div class="ac-list" id="acList" hidden></div>
+            <p class="hint" id="matchHint"></p>
+          </div>
+
+          <div class="field">
+            <label for="frameColor">Frame colour</label>
+            <select id="frameColor" class="input">
+              <option value="white" selected>White</option>
+              <option value="gold">Royal Gold</option>
+              <option value="black">Black</option>
+              <option value="brown">Brown</option>
+              <option value="green">Green</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Frame style</label>
+            <div class="style-toggle" id="styleToggle">
+              <label class="style-opt">
+                <input type="radio" name="frameStyle" value="arabic_and_meaning" checked>
+                <span>Arabic + Meaning</span>
+              </label>
+              <label class="style-opt">
+                <input type="radio" name="frameStyle" value="arabic_only">
+                <span>Arabic Script Only</span>
+              </label>
+            </div>
+            <p class="hint" id="styleHint">The English name and meaning are calligraphed onto the frame beneath the Arabic.</p>
+          </div>
+
+          <div class="field" id="manualFieldsWrap" hidden>
+            <div class="lookup-row">
+              <label for="manualArabic" style="margin-bottom:0;">Arabic script</label>
+              <button type="button" class="lookup-btn" id="lookupBtn">🔎 Find online</button>
+            </div>
+            <input type="text" id="manualArabic" class="input" placeholder="e.g. لَيْلَى" dir="rtl" style="font-size:19px;margin-bottom:12px;">
+            <div id="meaningFieldWrap">
+              <label for="manualMeaning">Meaning of this name</label>
+              <textarea id="manualMeaning" class="input" rows="2" placeholder="e.g. Night, Dark Beauty"></textarea>
+            </div>
+            <p class="hint" id="lookupHint">We couldn't find this name in our library. Tap "Find online" to search for its Arabic script and meaning, or enter them yourself — please double-check the result before adding to cart, since it's printed exactly as shown.</p>
+          </div>
+
+          <div class="price-row">
+            <span style="font-size:14px;color:var(--ink-soft);">Price for this name</span>
+            <span class="amt">₦20,000</span>
+          </div>
+
+          <button class="btn btn-primary btn-full" id="addToCartBtn" style="margin-top:20px;" disabled>Add to cart</button>
+          <p class="form-msg" id="formMsg"></p>
+          <p class="queued-note" id="queuedNote" hidden></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>How it works</h2>
+        <p>From typing a name to a frame at your door.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="num">01</span>
+          <h3>Add your names</h3>
+          <p>Search our library or enter a name and its meaning yourself. Add as many as you need.</p>
+        </div>
+        <div class="step">
+          <span class="num">02</span>
+          <h3>Review your cart</h3>
+          <p>Every name is ₦20,000. Check the list, remove or add more before checkout.</p>
+        </div>
+        <div class="step">
+          <span class="num">03</span>
+          <h3>Pay securely</h3>
+          <p>Enter your delivery details and pay online. You'll get an order reference instantly.</p>
+        </div>
+        <div class="step">
+          <span class="num">04</span>
+          <h3>We frame & deliver</h3>
+          <p>Each name is calligraphed, framed, and shipped to the address you provide.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand-name" style="font-size:18px;">CR-Frames</div>
+        <p>Caliph Ridwan Frames — Islamic name frames, calligraphed and framed to order.</p>
+      </div>
+      <div class="foot-meta">
+        <div>hello@crframes.ng</div>
+        <div>Lagos, Nigeria</div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 CR-Frames. All rights reserved.</span>
+      <span>Prices in Nigerian Naira (₦)</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="cartDrawer" role="dialog" aria-label="Your cart" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Your cart</h2>
+    <button class="icon-btn" id="closeCartBtn" aria-label="Close cart">✕</button>
+  </div>
+  <div class="drawer-body" id="cartBody"></div>
+  <div class="drawer-foot">
+    <div class="drawer-total">
+      <span class="lbl">Total (<span id="footCount">0</span> name<span id="footPlural">s</span>)</span>
+      <span class="val" id="footTotal">₦0</span>
+    </div>
+    <p class="hint" id="footSavings" style="color:var(--gold);font-weight:600;margin:-10px 0 14px;" hidden></p>
+    <button class="btn btn-gold btn-full" id="checkoutBtn" disabled>Proceed to checkout</button>
+  </div>
+</aside>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="modal" role="dialog" aria-label="Checkout">
+    <button class="icon-btn modal-close" id="closeCheckoutBtn" aria-label="Close">✕</button>
+    <div class="modal-head">
+      <h2 id="modalTitle">Delivery details</h2>
+    </div>
+    <div class="step-track">
+      <div class="tick done" id="tick1"></div>
+      <div class="tick" id="tick2"></div>
+      <div class="tick" id="tick3"></div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- API config ---------------- */
+  // Empty string = call the API on the SAME origin this page was loaded
+  // from. That's correct by default now, because the backend serves this
+  // page directly (visit http://localhost:4000 — see backend/server.js).
+  // Only set window.CR_FRAMES_API_BASE if you serve this file separately
+  // from a different host/port than the backend.
+  var API_BASE = window.CR_FRAMES_API_BASE || "";
+  var apiOnline = false;
+
+  /* ---------------- Name library (fallback until API responds) ---------------- */
+  var NAME_DB = [
+    {name:"Luqman", arabic:"لُقْمَانُ", meaning:"The Wise Man, Blessed with Wisdom"},
+    {name:"Fatimah", arabic:"فَاطِمَةُ", meaning:"Purified Woman, Daughter of Prophet Muhammad (SAW)"},
+    {name:"Rahma", arabic:"رَحْمَةُ", meaning:"Mercy, Compassion from Allah"},
+    {name:"Muhammad", arabic:"مُحَمَّدٌ", meaning:"The Praised One"},
+    {name:"Aisha", arabic:"عَائِشَةُ", meaning:"She Who Lives, Full of Life"},
+    {name:"Ibrahim", arabic:"إِبْرَاهِيمُ", meaning:"Father of Nations, the Friend of Allah"},
+    {name:"Yusuf", arabic:"يُوسُفُ", meaning:"God Increases, the Beautiful One"},
+    {name:"Maryam", arabic:"مَرْيَمُ", meaning:"The Beloved, Mother of Prophet Isa"},
+    {name:"Zainab", arabic:"زَيْنَبُ", meaning:"Fragrant Flower"},
+    {name:"Khadijah", arabic:"خَدِيجَةُ", meaning:"Early Baby, the First Believer"},
+    {name:"Hassan", arabic:"حَسَنٌ", meaning:"Handsome, Good"},
+    {name:"Husain", arabic:"حُسَيْنٌ", meaning:"Little Handsome One"},
+    {name:"Ridwan", arabic:"رِضْوَانُ", meaning:"Contentment, Divine Pleasure"},
+    {name:"Abdullah", arabic:"عَبْدُ اللّٰهِ", meaning:"Servant of Allah"},
+    {name:"Aminah", arabic:"آمِنَةُ", meaning:"Trustworthy, Peaceful, Mother of the Prophet (SAW)"},
+    {name:"Bilal", arabic:"بِلَالٌ", meaning:"Moisture, Freshness"},
+    {name:"Hafsah", arabic:"حَفْصَةُ", meaning:"Young Lioness"},
+    {name:"Ismail", arabic:"إِسْمَاعِيلُ", meaning:"God Will Hear"},
+    {name:"Umar", arabic:"عُمَرُ", meaning:"Long-Lived, Flourishing"},
+    {name:"Ali", arabic:"عَلِيٌّ", meaning:"The Exalted, The High One"},
+    {name:"Sumayyah", arabic:"سُمَيَّةُ", meaning:"Elevated, First Martyr of Islam"},
+    {name:"Sarah", arabic:"سَارَةُ", meaning:"Princess, Noblewoman"},
+    {name:"Yaqub", arabic:"يَعْقُوبُ", meaning:"Supplanter, One Who Follows"},
+    {name:"Nuh", arabic:"نُوحٌ", meaning:"Rest, Comfort — the Prophet Noah"},
+    {name:"Idris", arabic:"إِدْرِيسُ", meaning:"Studious, Interpreter"},
+    {name:"Rahma-tullah", arabic:"رَحْمَةُ اللّٰهِ", meaning:"The Mercy of Allah"},
+    {name:"Salma", arabic:"سَلْمَى", meaning:"Peaceful, Safe"},
+    {name:"Halima", arabic:"حَلِيمَةُ", meaning:"Gentle, Patient"},
+    {name:"Amirah", arabic:"أَمِيرَةُ", meaning:"Princess, Leader"},
+    {name:"Zayd", arabic:"زَيْدٌ", meaning:"Abundance, Growth"},
+    {name:"Hamza", arabic:"حَمْزَةُ", meaning:"Strong, Steadfast"},
+    {name:"Layla", arabic:"لَيْلَى", meaning:"Night, Dark Beauty"},
+    {name:"Safiyyah", arabic:"صَفِيَّةُ", meaning:"Pure, Chosen Friend"},
+    {name:"Ruqayyah", arabic:"رُقَيَّةُ", meaning:"Rising, Ascending"},
+    {name:"Asiya", arabic:"آسِيَةُ", meaning:"One Who Comforts, Wife of Pharaoh"},
+    {name:"Musa", arabic:"مُوسَى", meaning:"Drawn Out of Water — the Prophet Moses"},
+    {name:"Dawud", arabic:"دَاوُودُ", meaning:"Beloved — the Prophet David"},
+    {name:"Sulaiman", arabic:"سُلَيْمَانُ", meaning:"Man of Peace — the Prophet Solomon"},
+    {name:"Yahya", arabic:"يَحْيَى", meaning:"God is Gracious — the Prophet John"},
+    {name:"Zakariyya", arabic:"زَكَرِيَّا", meaning:"Remembrance of God"},
+    {name:"Rahim", arabic:"رَحِيمٌ", meaning:"Most Merciful, Compassionate"},
+    {name:"Nasir", arabic:"نَاصِرٌ", meaning:"Helper, Protector"},
+    {name:"Sadiq", arabic:"صَادِقٌ", meaning:"Truthful, Sincere"},
+    {name:"Jamila", arabic:"جَمِيلَةُ", meaning:"Beautiful"},
+    {name:"Bashir", arabic:"بَشِيرٌ", meaning:"Bringer of Good News"},
+    {name:"Ganiyu", arabic:"عَبْدُ الْغَنِيِّ", meaning:"Servant of the Wealthy One"}
+  ];
+
+  var PRICE = 20000;
+  var BUNDLE_SIZE = 3;
+  var BUNDLE_PRICE = 50000;
+  var cart = [];
+  var selectedMatch = null; // db object if matched
+  var acActiveIndex = -1;
+
+  // Bundle pricing: every group of BUNDLE_SIZE names costs BUNDLE_PRICE,
+  // any remainder is charged at the regular per-name price. Mirrors
+  // backend/src/pricing.js exactly — keep the two in sync if this changes.
+  function computeSubtotal(count){ return count * PRICE; }
+  function computeTotal(count){
+    var bundles = Math.floor(count / BUNDLE_SIZE);
+    var remainder = count % BUNDLE_SIZE;
+    return bundles * BUNDLE_PRICE + remainder * PRICE;
+  }
+  function computeSavings(count){ return computeSubtotal(count) - computeTotal(count); }
+  function queuedNoteHtml(count){
+    var savings = computeSavings(count);
+    var text = "You have <strong>"+count+"</strong> name"+(count>1?"s":"")+" queued — "+ngn(computeTotal(count))+" so far.";
+    if(savings > 0) text += ' <span style="color:var(--gold);font-weight:600;">(saving '+ngn(savings)+' with the bundle deal!)</span>';
+    return text;
+  }
+
+  /* ---------------- helpers ---------------- */
+  function ngn(n){
+    return "₦" + n.toLocaleString("en-NG");
+  }
+  function styleTag(item){
+    var parts = [];
+    if(item.style === "arabic_only") parts.push("Arabic only");
+    if(item.color && item.color !== "white") parts.push((FRAME_COLOR_LABELS[item.color] || item.color) + " frame");
+    return parts.length ? " (" + parts.join(", ") + ")" : "";
+  }
+  function genRef(){
+    return "CRF-" + Date.now().toString().slice(-6) + "-" + Math.floor(Math.random()*900+100);
+  }
+  function findMatches(q){
+    q = q.trim().toLowerCase();
+    if(!q) return [];
+    return NAME_DB.filter(function(n){ return n.name.toLowerCase().indexOf(q) === 0; })
+      .concat(NAME_DB.filter(function(n){ return n.name.toLowerCase().indexOf(q) > 0; }))
+      .filter(function(n, i, arr){ return arr.indexOf(n) === i; })
+      .slice(0, 7);
+  }
+  function exactMatch(q){
+    q = q.trim().toLowerCase();
+    return NAME_DB.find(function(n){ return n.name.toLowerCase() === q; }) || null;
+  }
+
+  /* ---------------- gallery slider ---------------- */
+  var galleryStrip = document.getElementById("galleryStrip");
+  var sliderDots = document.getElementById("sliderDots");
+  var sliderPrev = document.getElementById("sliderPrev");
+  var sliderNext = document.getElementById("sliderNext");
+
+  // Showcases both frame styles side by side. Falls back gracefully if a
+  // name isn't present yet (e.g. before the API's name list has loaded).
+  var GALLERY_PICKS = [
+    {name:"Luqman", style:"ivory"},
+    {name:"Fatimah", style:"ivory"},
+    {name:"Ganiyu", style:"emerald"},
+    {name:"Rahma", style:"emerald"},
+    {name:"Yusuf", style:"ivory"},
+    {name:"Zainab", style:"emerald"}
+  ];
+
+  // Small inline SVG ornament — a rose cluster in each lower corner,
+  // echoing the motif from the reference frame designs in miniature.
+  var FLOWER_SVG = '<svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">'+
+    '<circle cx="17" cy="10" r="4" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
+    '<circle cx="11" cy="14" r="3.6" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
+    '<circle cx="23" cy="14" r="3.6" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
+    '<circle cx="14" cy="17" r="3.2" fill="#fdfaf3"/>'+
+    '<circle cx="20" cy="17" r="3.2" fill="#fdfaf3"/>'+
+    '<circle cx="17" cy="15" r="2.6" fill="#E7DCCB"/>'+
+    '<path d="M17 20 L17 29" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+    '<path d="M17 23 Q11.5 23.5 9.5 28" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+    '<path d="M17 25 Q22.5 25.5 24.5 29.5" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+  '</svg>';
+
+  function renderGallery(){
+    var picks = GALLERY_PICKS.map(function(g){
+      var found = NAME_DB.find(function(n){ return n.name.toLowerCase() === g.name.toLowerCase(); });
+      return found ? {name:found.name, arabic:found.arabic, meaning:found.meaning, styleVariant:g.style} : null;
+    }).filter(Boolean);
+
+    galleryStrip.innerHTML = picks.map(function(n){
+      var label = n.styleVariant === "emerald" ? "EMERALD GOLD" : "IVORY CLASSIC";
+      return '<div class="slide"><div class="mini-arch '+n.styleVariant+'">'+
+        '<div class="mini-arch-inner">'+
+          '<span class="mini-flower mini-flower-left">'+FLOWER_SVG+'</span>'+
+          '<span class="mini-flower mini-flower-right">'+FLOWER_SVG+'</span>'+
+          '<div class="mini-arch-arabic">'+n.arabic+'</div>'+
+          '<div class="mini-arch-name">'+n.name+'</div>'+
+          '<div class="mini-arch-meaning">'+n.meaning+'</div>'+
+          '<div class="mini-arch-style-tag">'+label+'</div>'+
+        '</div></div></div>';
+    }).join("");
+
+    buildDots(picks.length);
+  }
+
+  function buildDots(count){
+    sliderDots.innerHTML = "";
+    for(var i=0;i<count;i++){
+      var b = document.createElement("button");
+      b.className = "slider-dot" + (i===0 ? " active" : "");
+      b.setAttribute("aria-label", "Go to slide " + (i+1));
+      b.addEventListener("click", (function(idx){ return function(){ scrollToSlide(idx); }; })(i));
+      sliderDots.appendChild(b);
+    }
+  }
+
+  function scrollToSlide(idx){
+    var slides = galleryStrip.querySelectorAll(".slide");
+    if(!slides[idx]) return;
+    var trackRect = galleryStrip.getBoundingClientRect();
+    var slideRect = slides[idx].getBoundingClientRect();
+    galleryStrip.scrollBy({left: slideRect.left - trackRect.left, behavior:"smooth"});
+  }
+
+  function sliderStep(){
+    var slideEl = galleryStrip.querySelector(".slide");
+    return slideEl ? slideEl.getBoundingClientRect().width + 22 : 250;
+  }
+  sliderPrev.addEventListener("click", function(){ galleryStrip.scrollBy({left:-sliderStep(), behavior:"smooth"}); });
+  sliderNext.addEventListener("click", function(){ galleryStrip.scrollBy({left:sliderStep(), behavior:"smooth"}); });
+
+  var galleryScrollTimeout;
+  galleryStrip.addEventListener("scroll", function(){
+    clearTimeout(galleryScrollTimeout);
+    galleryScrollTimeout = setTimeout(function(){
+      var slides = galleryStrip.querySelectorAll(".slide");
+      var trackLeft = galleryStrip.getBoundingClientRect().left;
+      var closestIdx = 0, closestDist = Infinity;
+      slides.forEach(function(s, i){
+        var dist = Math.abs(s.getBoundingClientRect().left - trackLeft);
+        if(dist < closestDist){ closestDist = dist; closestIdx = i; }
+      });
+      sliderDots.querySelectorAll(".slider-dot").forEach(function(d, i){
+        d.classList.toggle("active", i === closestIdx);
+      });
+    }, 100);
+  });
+
+  renderGallery();
+
+  /* ---------------- order builder elements ---------------- */
+  var nameInput = document.getElementById("nameInput");
+  var acList = document.getElementById("acList");
+  var matchHint = document.getElementById("matchHint");
+  var manualField = document.getElementById("manualFieldsWrap");
+  var manualArabic = document.getElementById("manualArabic");
+  var manualMeaning = document.getElementById("manualMeaning");
+  var meaningFieldWrap = document.getElementById("meaningFieldWrap");
+  var lookupBtn = document.getElementById("lookupBtn");
+  var lookupHint = document.getElementById("lookupHint");
+  var styleHint = document.getElementById("styleHint");
+  var addBtn = document.getElementById("addToCartBtn");
+  var formMsg = document.getElementById("formMsg");
+  var queuedNote = document.getElementById("queuedNote");
+
+  var prevArabic = document.getElementById("prevArabic");
+  var prevName = document.getElementById("prevName");
+  var prevMeaning = document.getElementById("prevMeaning");
+  var frameColorSelect = document.getElementById("frameColor");
+  var previewArchShell = document.getElementById("previewArchShell");
+
+  var FRAME_COLOR_LABELS = {white:"White", gold:"Royal Gold", black:"Black", brown:"Brown", green:"Green"};
+
+  function currentColor(){
+    return frameColorSelect ? frameColorSelect.value : "white";
+  }
+
+  function currentStyle(){
+    var checked = document.querySelector('input[name="frameStyle"]:checked');
+    return checked ? checked.value : "arabic_and_meaning";
+  }
+
+  frameColorSelect.addEventListener("change", function(){
+    previewArchShell.className = "arch-shell color-" + currentColor();
+  });
+
+  function updatePreview(){
+    var typed = nameInput.value.trim();
+    var style = currentStyle();
+    prevName.style.display = style === "arabic_only" ? "none" : "";
+    prevMeaning.style.display = style === "arabic_only" ? "none" : "";
+
+    if(!typed){
+      prevArabic.textContent = "؟";
+      prevName.textContent = "Your name";
+      prevMeaning.textContent = "Its meaning will appear here";
+      return;
+    }
+    if(selectedMatch){
+      prevArabic.textContent = selectedMatch.arabic;
+      prevName.textContent = selectedMatch.name;
+      prevMeaning.textContent = selectedMatch.meaning;
+    } else {
+      prevArabic.textContent = manualArabic.value.trim() || "✦";
+      prevName.textContent = typed;
+      prevMeaning.textContent = manualMeaning.value.trim() || "Add a meaning below";
+    }
+  }
+
+  function updateStyleUI(){
+    var style = currentStyle();
+    if(style === "arabic_only"){
+      meaningFieldWrap.hidden = true;
+      styleHint.textContent = "Only the Arabic calligraphy is framed — no English name or meaning printed.";
+    } else {
+      meaningFieldWrap.hidden = false;
+      styleHint.textContent = "The English name and meaning are calligraphed onto the frame beneath the Arabic.";
+    }
+    updateAddBtnState();
+    updatePreview();
+  }
+
+  function updateAddBtnState(){
+    var typed = nameInput.value.trim();
+    if(!typed){ addBtn.disabled = true; return; }
+    if(selectedMatch){ addBtn.disabled = false; return; }
+    var style = currentStyle();
+    var hasArabic = manualArabic.value.trim().length > 0;
+    var hasMeaning = manualMeaning.value.trim().length > 0;
+    addBtn.disabled = !hasArabic || (style === "arabic_and_meaning" && !hasMeaning);
+  }
+
+  function refreshFormState(){
+    var typed = nameInput.value.trim();
+    var exact = exactMatch(typed);
+    selectedMatch = exact;
+
+    if(!typed){
+      manualField.hidden = true;
+      matchHint.textContent = "";
+      addBtn.disabled = true;
+      updatePreview();
+      return;
+    }
+
+    if(exact){
+      manualField.hidden = true;
+      matchHint.textContent = "Found in our library — Arabic script and meaning filled in automatically.";
+    } else {
+      manualField.hidden = false;
+      matchHint.textContent = "";
+    }
+    updateAddBtnState();
+    updatePreview();
+  }
+
+  function renderAcList(){
+    var matches = findMatches(nameInput.value);
+    acActiveIndex = -1;
+    if(matches.length === 0 || exactMatch(nameInput.value)){
+      acList.hidden = true;
+      acList.innerHTML = "";
+      return;
+    }
+    acList.innerHTML = matches.map(function(n, i){
+      return '<div class="ac-item" data-idx="'+i+'" data-name="'+n.name+'">'+
+        '<span>'+n.name+'</span><span class="m">'+n.meaning.split(",")[0]+'</span></div>';
+    }).join("");
+    acList.hidden = false;
+    Array.prototype.forEach.call(acList.querySelectorAll(".ac-item"), function(item){
+      item.addEventListener("click", function(){
+        nameInput.value = item.getAttribute("data-name");
+        acList.hidden = true;
+        refreshFormState();
+      });
+    });
+  }
+
+  nameInput.addEventListener("input", function(){
+    refreshFormState();
+    renderAcList();
+  });
+  nameInput.addEventListener("keydown", function(e){
+    var items = acList.querySelectorAll(".ac-item");
+    if(acList.hidden || items.length === 0) return;
+    if(e.key === "ArrowDown"){
+      e.preventDefault();
+      acActiveIndex = Math.min(acActiveIndex+1, items.length-1);
+    } else if(e.key === "ArrowUp"){
+      e.preventDefault();
+      acActiveIndex = Math.max(acActiveIndex-1, 0);
+    } else if(e.key === "Enter" && acActiveIndex >= 0){
+      e.preventDefault();
+      items[acActiveIndex].click();
+      return;
+    } else if(e.key === "Escape"){
+      acList.hidden = true;
+      return;
+    } else {
+      return;
+    }
+    Array.prototype.forEach.call(items, function(it,i){ it.classList.toggle("active", i===acActiveIndex); });
+  });
+  document.addEventListener("click", function(e){
+    if(!e.target.closest(".autocomplete")) acList.hidden = true;
+  });
+  manualMeaning.addEventListener("input", function(){ updateAddBtnState(); updatePreview(); });
+  manualArabic.addEventListener("input", function(){ updateAddBtnState(); updatePreview(); });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="frameStyle"]'), function(radio){
+    radio.addEventListener("change", updateStyleUI);
+  });
+
+  /* -------- automatic online meaning + Arabic script lookup -------- */
+  function runLookup(){
+    var typed = nameInput.value.trim();
+    if(!typed || selectedMatch || !apiOnline) return;
+    lookupBtn.disabled = true;
+    lookupBtn.textContent = "Searching…";
+    lookupHint.textContent = "Searching the web for \""+typed+"\"…";
+
+    apiFetch("/api/names/lookup?name=" + encodeURIComponent(typed)).then(function(data){
+      if(data.source === "none"){
+        lookupHint.textContent = "Couldn't find this one automatically — please enter the Arabic script and meaning yourself.";
+        return;
+      }
+      if(data.arabic && !manualArabic.value.trim()) manualArabic.value = data.arabic;
+      if(data.meaning && !manualMeaning.value.trim()) manualMeaning.value = data.meaning;
+      lookupHint.innerHTML = "Suggested from the web (" + (data.sourceLabel || "online search") + ") — please review before adding to cart, since it's printed exactly as shown." +
+        (data.sourceUrl ? ' <a href="'+data.sourceUrl+'" target="_blank" rel="noopener">Source ↗</a>' : "");
+      updateAddBtnState();
+      updatePreview();
+    }).catch(function(){
+      lookupHint.textContent = "Couldn't reach the lookup service — please enter the Arabic script and meaning yourself.";
+    }).finally(function(){
+      lookupBtn.disabled = false;
+      lookupBtn.textContent = "🔎 Find online";
+    });
+  }
+  lookupBtn.addEventListener("click", runLookup);
+  nameInput.addEventListener("blur", function(){
+    // Auto-run once, quietly, when the customer tabs away from an unmatched name.
+    setTimeout(function(){
+      if(!manualField.hidden && !manualArabic.value.trim() && !manualMeaning.value.trim()) runLookup();
+    }, 150);
+  });
+
+  addBtn.addEventListener("click", function(){
+    var typed = nameInput.value.trim();
+    if(!typed) return;
+    var style = currentStyle();
+    var color = currentColor();
+    var entry;
+    if(selectedMatch){
+      entry = {name:selectedMatch.name, arabic:selectedMatch.arabic, meaning:selectedMatch.meaning, style:style, color:color, price:PRICE, id: Date.now()+Math.random()};
+    } else {
+      var arabic = manualArabic.value.trim();
+      var m = manualMeaning.value.trim();
+      if(!arabic){ formMsg.textContent = "Please add the Arabic script for this name."; formMsg.className = "form-msg error"; return; }
+      if(style === "arabic_and_meaning" && !m){ formMsg.textContent = "Please add a meaning, or switch to \"Arabic Script Only\"."; formMsg.className = "form-msg error"; return; }
+      entry = {name:typed, arabic:arabic, meaning: m || "", style:style, color:color, price:PRICE, id: Date.now()+Math.random()};
+    }
+    cart.push(entry);
+    formMsg.textContent = "Added \""+entry.name+"\" to your cart.";
+    formMsg.className = "form-msg ok";
+    queuedNote.hidden = false;
+    queuedNote.innerHTML = queuedNoteHtml(cart.length);
+    nameInput.value = "";
+    manualArabic.value = "";
+    manualMeaning.value = "";
+    manualField.hidden = true;
+    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or enter them yourself — please double-check the result before adding to cart, since it's printed exactly as shown.";
+    var defaultStyleRadio = document.querySelector('input[name="frameStyle"][value="arabic_and_meaning"]');
+    if(defaultStyleRadio) defaultStyleRadio.checked = true;
+    meaningFieldWrap.hidden = false;
+    styleHint.textContent = "The English name and meaning are calligraphed onto the frame beneath the Arabic.";
+    selectedMatch = null;
+    addBtn.disabled = true;
+    updatePreview();
+    renderCart();
+    setTimeout(function(){ formMsg.textContent = ""; }, 3500);
+  });
+
+  /* ---------------- cart drawer ---------------- */
+  var cartCount = document.getElementById("cartCount");
+  var cartBody = document.getElementById("cartBody");
+  var footCount = document.getElementById("footCount");
+  var footPlural = document.getElementById("footPlural");
+  var footTotal = document.getElementById("footTotal");
+  var footSavings = document.getElementById("footSavings");
+  var checkoutBtn = document.getElementById("checkoutBtn");
+  var drawer = document.getElementById("cartDrawer");
+  var drawerOverlay = document.getElementById("drawerOverlay");
+  var openCartBtn = document.getElementById("openCartBtn");
+  var closeCartBtn = document.getElementById("closeCartBtn");
+
+  function renderCart(){
+    cartCount.textContent = cart.length;
+    footCount.textContent = cart.length;
+    footPlural.textContent = cart.length === 1 ? "" : "s";
+    var total = computeTotal(cart.length);
+    footTotal.textContent = ngn(total);
+    var savings = computeSavings(cart.length);
+    if(savings > 0){
+      footSavings.hidden = false;
+      footSavings.textContent = "🎉 Bundle deal applied — you're saving " + ngn(savings) + "!";
+    } else {
+      footSavings.hidden = true;
+    }
+    checkoutBtn.disabled = cart.length === 0;
+
+    if(cart.length === 0){
+      cartBody.innerHTML = '<div class="cart-empty"><div class="arabic">✦</div>Your cart is empty.<br>Add a name to begin your order.</div>';
+      return;
+    }
+    cartBody.innerHTML = cart.map(function(item){
+      var styleLabel = item.style === "arabic_only" ? "Arabic script only" : "Arabic + meaning";
+      var colorLabel = FRAME_COLOR_LABELS[item.color] || "White";
+      var meaningLine = item.style === "arabic_only" ? "" : '<div class="ci-meaning">'+item.meaning+'</div>';
+      return '<div class="cart-item" data-id="'+item.id+'">'+
+        '<div class="ci-arabic">'+item.arabic+'</div>'+
+        '<div class="ci-info">'+
+          '<div class="ci-name">'+item.name+'</div>'+
+          meaningLine+
+          '<div class="ci-price">'+ngn(item.price)+' · <span style="color:var(--gold);">'+styleLabel+' · '+colorLabel+'</span></div>'+
+          '<button class="ci-remove" data-id="'+item.id+'">Remove</button>'+
+        '</div>'+
+      '</div>';
+    }).join("");
+    Array.prototype.forEach.call(cartBody.querySelectorAll(".ci-remove"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        cart = cart.filter(function(it){ return String(it.id) !== String(id); });
+        renderCart();
+        queuedNote.hidden = cart.length === 0;
+        if(cart.length){
+          queuedNote.innerHTML = queuedNoteHtml(cart.length);
+        }
+      });
+    });
+  }
+
+  function openDrawer(){
+    drawer.classList.add("show");
+    drawerOverlay.classList.add("show");
+    drawer.setAttribute("aria-hidden","false");
+  }
+  function closeDrawer(){
+    drawer.classList.remove("show");
+    drawerOverlay.classList.remove("show");
+    drawer.setAttribute("aria-hidden","true");
+  }
+  openCartBtn.addEventListener("click", openDrawer);
+  closeCartBtn.addEventListener("click", closeDrawer);
+  drawerOverlay.addEventListener("click", closeDrawer);
+
+  /* ---------------- checkout modal (3 steps) ---------------- */
+  var checkoutOverlay = document.getElementById("checkoutOverlay");
+  var closeCheckoutBtn = document.getElementById("closeCheckoutBtn");
+  var modalTitle = document.getElementById("modalTitle");
+  var modalBody = document.getElementById("modalBody");
+  var tick1 = document.getElementById("tick1");
+  var tick2 = document.getElementById("tick2");
+  var tick3 = document.getElementById("tick3");
+
+  var customer = {fullName:"", phone:"", email:"", address:"", city:""};
+  var lastOrderRef = "";
+
+  function openCheckout(){
+    closeDrawer();
+    checkoutOverlay.classList.add("show");
+    renderStepDetails();
+  }
+  function closeCheckout(){
+    checkoutOverlay.classList.remove("show");
+  }
+  checkoutBtn.addEventListener("click", openCheckout);
+  closeCheckoutBtn.addEventListener("click", closeCheckout);
+  checkoutOverlay.addEventListener("click", function(e){
+    if(e.target === checkoutOverlay) closeCheckout();
+  });
+
+  function setTicks(step){
+    tick1.classList.toggle("done", step>=1);
+    tick2.classList.toggle("done", step>=2);
+    tick3.classList.toggle("done", step>=3);
+  }
+
+  function renderStepDetails(){
+    setTicks(1);
+    modalTitle.textContent = "Delivery details";
+    modalBody.innerHTML =
+      '<div class="field"><label for="fFullName">Full name</label>'+
+        '<input class="input" id="fFullName" value="'+customer.fullName+'" placeholder="e.g. Ridwan Ganiyy"></div>'+
+      '<div class="row2">'+
+        '<div class="field"><label for="fPhone">Phone number</label>'+
+          '<input class="input" id="fPhone" value="'+customer.phone+'" placeholder="080X XXX XXXX"></div>'+
+        '<div class="field"><label for="fEmail">Email</label>'+
+          '<input class="input" id="fEmail" type="email" value="'+customer.email+'" placeholder="you@email.com"></div>'+
+      '</div>'+
+      '<div class="field"><label for="fAddress">Delivery address</label>'+
+        '<textarea class="input" id="fAddress" rows="2" placeholder="Street, house number, landmark">'+customer.address+'</textarea></div>'+
+      '<div class="field"><label for="fCity">City / State</label>'+
+        '<input class="input" id="fCity" value="'+customer.city+'" placeholder="e.g. Ikeja, Lagos"></div>'+
+      '<p class="form-msg error" id="detailsMsg"></p>'+
+      '<button class="btn btn-primary btn-full" id="toReviewBtn">Continue to review</button>';
+
+    document.getElementById("toReviewBtn").addEventListener("click", function(){
+      customer.fullName = document.getElementById("fFullName").value.trim();
+      customer.phone = document.getElementById("fPhone").value.trim();
+      customer.email = document.getElementById("fEmail").value.trim();
+      customer.address = document.getElementById("fAddress").value.trim();
+      customer.city = document.getElementById("fCity").value.trim();
+      var msg = document.getElementById("detailsMsg");
+      if(!customer.fullName || !customer.phone || !customer.address || !customer.city){
+        msg.textContent = "Please fill in your name, phone, address and city.";
+        return;
+      }
+      if(customer.email && !/^\S+@\S+\.\S+$/.test(customer.email)){
+        msg.textContent = "That email doesn't look right.";
+        return;
+      }
+      renderStepReview();
+    });
+  }
+
+  function renderStepReview(){
+    setTicks(2);
+    modalTitle.textContent = "Review your order";
+    var lines = cart.map(function(item){
+      return '<div class="summary-line"><span>'+item.name+styleTag(item)+'</span><span class="n">'+ngn(item.price)+'</span></div>';
+    }).join("");
+    var subtotal = computeSubtotal(cart.length);
+    var total = computeTotal(cart.length);
+    var savings = subtotal - total;
+    var discountRow = savings > 0
+      ? '<div class="summary-line"><span>Bundle discount</span><span class="n" style="color:var(--gold);">−'+ngn(savings)+'</span></div>'
+      : "";
+    modalBody.innerHTML =
+      '<div>'+lines+discountRow+'</div>'+
+      '<div class="summary-total"><span class="lbl">Total</span><span class="val">'+ngn(total)+'</span></div>'+
+      (savings > 0 ? '<p class="hint" style="color:var(--gold);font-weight:600;margin-top:-8px;">🎉 You\'re saving '+ngn(savings)+' with the 3-frame bundle deal!</p>' : '')+
+      '<div class="field" style="margin-top:22px;">'+
+        '<label>Deliver to</label>'+
+        '<p style="font-size:14px;color:var(--ink-soft);margin:6px 0 0;line-height:1.5;">'+
+          customer.fullName+' · '+customer.phone+'<br>'+customer.address+', '+customer.city+
+        '</p>'+
+      '</div>'+
+      '<div style="display:flex;gap:10px;margin-top:24px;">'+
+        '<button class="btn btn-outline" id="backToDetails" style="flex:1;">Back</button>'+
+        '<button class="btn btn-gold" id="toPayBtn" style="flex:2;">Pay '+ngn(total)+'</button>'+
+      '</div>';
+    document.getElementById("backToDetails").addEventListener("click", renderStepDetails);
+    document.getElementById("toPayBtn").addEventListener("click", renderStepPayment);
+  }
+
+  function renderStepPayment(){
+    setTicks(3);
+    modalTitle.textContent = "Processing payment";
+    var total = computeTotal(cart.length);
+    modalBody.innerHTML =
+      '<div class="pay-mock">'+
+        '<div class="plogo">CR-Frames Secure Checkout</div>'+
+        '<div class="psub">Charging card on file · '+ngn(total)+'</div>'+
+        '<div class="spinner"></div>'+
+        '<div style="font-size:13px;color:var(--ink-soft);">Confirming your payment…</div>'+
+      '</div>'+
+      '<div class="integration-note">This is a demo payment screen. In production, this step calls a real payment gateway (e.g. Paystack or Flutterwave) to charge the card and confirm the transaction before an order is created.</div>';
+
+    setTimeout(function(){
+      lastOrderRef = genRef();
+      renderStepConfirmation();
+    }, 1800);
+  }
+
+  function renderStepConfirmation(){
+    modalTitle.textContent = "Order confirmed";
+    var total = computeTotal(cart.length);
+    var count = cart.length;
+    modalBody.innerHTML =
+      '<div style="text-align:center;">'+
+        '<div class="confirm-icon">✓</div>'+
+        '<p style="font-family:\'Cormorant Garamond\',serif;font-size:19px;color:var(--ink-soft);margin:0;">'+
+          'Thank you, '+(customer.fullName.split(" ")[0]||"friend")+'. Your '+count+' name'+(count>1?"s are":" is")+' now with our calligraphers.'+
+        '</p>'+
+        '<div class="ref-box"><div class="lbl">ORDER REFERENCE</div><div class="ref">'+lastOrderRef+'</div></div>'+
+        '<div style="text-align:left;">'+
+          cart.map(function(item){ return '<div class="summary-line"><span>'+item.name+styleTag(item)+'</span><span class="n">'+ngn(item.price)+'</span></div>'; }).join("")+
+          '<div class="summary-total"><span class="lbl">Total paid</span><span class="val">'+ngn(total)+'</span></div>'+
+        '</div>'+
+        '<p style="font-size:13px;color:var(--ink-soft);margin-top:18px;">A confirmation has been sent to '+(customer.email||"your phone number")+'. Delivery to '+customer.city+' typically takes 5–10 working days.</p>'+
+        '<button class="btn btn-primary btn-full" id="doneBtn" style="margin-top:10px;">Done</button>'+
+      '</div>';
+
+    document.getElementById("doneBtn").addEventListener("click", function(){
+      cart = [];
+      renderCart();
+      queuedNote.hidden = true;
+      closeCheckout();
+    });
+  }
+
+  /* ---------------- keyboard: escape closes overlays ---------------- */
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeDrawer();
+      closeCheckout();
+    }
+  });
+
+  /* ---------------- API helpers ---------------- */
+  function apiFetch(path, options){
+    return fetch(API_BASE + path, Object.assign({
+      headers: {"Content-Type":"application/json"}
+    }, options)).then(function(resp){
+      return resp.json().then(function(data){
+        if(!resp.ok) throw Object.assign(new Error(data.error || "request_failed"), {data:data, status:resp.status});
+        return data;
+      });
+    });
+  }
+
+  function loadNamesFromApi(){
+    apiFetch("/api/names").then(function(data){
+      if(Array.isArray(data.names) && data.names.length){
+        NAME_DB = data.names;
+        apiOnline = true;
+        renderGallery(); // rebuild with live data now that it's confirmed available
+      }
+    }).catch(function(){
+      apiOnline = false;
+      console.warn("CR-Frames API not reachable — using local name list and mock checkout only.");
+    });
+  }
+
+  /* ---------------- real checkout flow (talks to backend) ---------------- */
+  function renderStepPaymentLive(order){
+    setTicks(3);
+    modalTitle.textContent = "Redirecting to secure payment";
+    modalBody.innerHTML =
+      '<div class="pay-mock">'+
+        '<div class="plogo">CR-Frames Secure Checkout</div>'+
+        '<div class="psub">Preparing payment for '+ngn(order.totalAmount)+'</div>'+
+        '<div class="spinner"></div>'+
+        '<div style="font-size:13px;color:var(--ink-soft);">Connecting to payment provider…</div>'+
+      '</div>';
+
+    apiFetch("/api/payments/initialize", {
+      method:"POST",
+      body: JSON.stringify({reference: order.reference})
+    }).then(function(data){
+      if(data.mock){
+        // dev/mock mode: backend has no Paystack key configured yet
+        return apiFetch("/api/payments/mock-confirm", {
+          method:"POST",
+          body: JSON.stringify({reference: order.reference})
+        }).then(function(confirmed){
+          renderStepConfirmationLive(confirmed.order);
+        });
+      }
+      // live mode: hand off to Paystack's hosted checkout page
+      window.location.href = data.authorization_url;
+    }).catch(function(err){
+      renderPaymentError(order, err);
+    });
+  }
+
+  function renderPaymentError(order, err){
+    modalTitle.textContent = "Payment couldn't start";
+    modalBody.innerHTML =
+      '<p style="font-size:14px;color:var(--ink-soft);line-height:1.6;">'+
+        'We couldn\'t reach the payment service. Your order was saved as <strong>'+order.reference+'</strong> — '+
+        'you can try paying again, or contact us with this reference.'+
+      '</p>'+
+      '<div class="integration-note">'+(err && err.message ? "Details: "+err.message : "")+'</div>'+
+      '<div style="display:flex;gap:10px;margin-top:20px;">'+
+        '<button class="btn btn-outline" id="retryPay" style="flex:1;">Try again</button>'+
+        '<button class="btn btn-primary" id="closeErr" style="flex:1;">Close</button>'+
+      '</div>';
+    document.getElementById("retryPay").addEventListener("click", function(){ renderStepPaymentLive(order); });
+    document.getElementById("closeErr").addEventListener("click", closeCheckout);
+  }
+
+  function renderStepConfirmationLive(order){
+    modalTitle.textContent = "Order confirmed";
+    modalBody.innerHTML =
+      '<div style="text-align:center;">'+
+        '<div class="confirm-icon">✓</div>'+
+        '<p style="font-family:\'Cormorant Garamond\',serif;font-size:19px;color:var(--ink-soft);margin:0;">'+
+          'Thank you, '+(order.customer.fullName.split(" ")[0]||"friend")+'. Your '+order.items.length+' name'+(order.items.length>1?"s are":" is")+' now with our calligraphers.'+
+        '</p>'+
+        '<div class="ref-box"><div class="lbl">ORDER REFERENCE</div><div class="ref">'+order.reference+'</div></div>'+
+        '<div style="text-align:left;">'+
+          order.items.map(function(item){ return '<div class="summary-line"><span>'+item.name+styleTag(item)+'</span><span class="n">'+ngn(item.price)+'</span></div>'; }).join("")+
+          (order.discount ? '<div class="summary-line"><span>Bundle discount</span><span class="n" style="color:var(--gold);">−'+ngn(order.discount)+'</span></div>' : '')+
+          '<div class="summary-total"><span class="lbl">Total paid</span><span class="val">'+ngn(order.totalAmount)+'</span></div>'+
+        '</div>'+
+        '<p style="font-size:13px;color:var(--ink-soft);margin-top:18px;">A confirmation has been sent to '+(order.customer.email||"your phone number")+'. Delivery to '+order.customer.city+' typically takes 5–10 working days.</p>'+
+        '<button class="btn btn-primary btn-full" id="doneBtn" style="margin-top:10px;">Done</button>'+
+      '</div>';
+
+    document.getElementById("doneBtn").addEventListener("click", function(){
+      cart = [];
+      renderCart();
+      queuedNote.hidden = true;
+      closeCheckout();
+      history.replaceState(null, "", window.location.pathname);
+    });
+  }
+
+  // Override the review step's "Pay" handler to go through the real API
+  // (create order -> initialize payment) when the backend is reachable,
+  // falling back to the original in-browser mock otherwise.
+  var originalRenderStepReview = renderStepReview;
+  renderStepReview = function(){
+    originalRenderStepReview();
+    var payBtn = document.getElementById("toPayBtn");
+    if(!payBtn) return;
+    var freshBtn = payBtn.cloneNode(true);
+    payBtn.parentNode.replaceChild(freshBtn, payBtn);
+    freshBtn.addEventListener("click", function(){
+      if(!apiOnline){
+        renderStepPayment(); // local mock fallback (backend not reachable)
+        return;
+      }
+      freshBtn.disabled = true;
+      freshBtn.textContent = "Placing order…";
+      apiFetch("/api/orders", {
+        method:"POST",
+        body: JSON.stringify({
+          items: cart.map(function(i){ return {name:i.name, arabic:i.arabic, meaning:i.meaning, style:i.style, color:i.color}; }),
+          customer: customer
+        })
+      }).then(function(data){
+        renderStepPaymentLive(data.order);
+      }).catch(function(err){
+        freshBtn.disabled = false;
+        freshBtn.textContent = "Pay "+ngn(computeTotal(cart.length));
+        var msg = document.createElement("p");
+        msg.className = "form-msg error";
+        msg.textContent = (err.data && err.data.messages && err.data.messages[0]) || "Couldn't place the order — please try again.";
+        modalBody.appendChild(msg);
+      });
+    });
+  };
+
+  /* ---------------- handle return from a real Paystack redirect ---------------- */
+  function checkForPaymentReturn(){
+    var params = new URLSearchParams(window.location.search);
+    var reference = params.get("reference");
+    var status = params.get("status");
+    if(!reference) return;
+
+    apiFetch("/api/orders/" + encodeURIComponent(reference)).then(function(data){
+      checkoutOverlay.classList.add("show");
+      if(data.order.status === "paid"){
+        renderStepConfirmationLive(data.order);
+      } else {
+        modalTitle.textContent = "Payment not completed";
+        modalBody.innerHTML =
+          '<p style="font-size:14px;color:var(--ink-soft);line-height:1.6;">'+
+            'We couldn\'t confirm payment for order <strong>'+reference+'</strong> (status: '+(status||data.order.status)+'). '+
+            'No charge was completed — you can close this and try again.'+
+          '</p>'+
+          '<button class="btn btn-primary btn-full" id="closeReturn" style="margin-top:16px;">Close</button>';
+        document.getElementById("closeReturn").addEventListener("click", function(){
+          closeCheckout();
+          history.replaceState(null, "", window.location.pathname);
+        });
+      }
+    }).catch(function(){ /* silently ignore — API not reachable */ });
+  }
+
+  /* ---------------- init ---------------- */
+  renderCart();
+  updateStyleUI();
+  loadNamesFromApi();
+  checkForPaymentReturn();
+})();
+</script>
+</body>
+</html>
