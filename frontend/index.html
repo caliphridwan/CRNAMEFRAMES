@@ -255,6 +255,7 @@
   .builder-form{padding:36px 34px;}
   .field{margin-bottom:20px;}
   .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px;}
+  .optional-tag{font-weight:500;color:var(--ink-soft);font-size:11.5px;text-transform:none;}
   .field .hint{font-size:12.5px;color:var(--ink-soft);margin-top:6px;}
   .input, textarea, select{
     width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);
@@ -540,15 +541,15 @@
 
           <div class="field" id="manualFieldsWrap" hidden>
             <div class="lookup-row">
-              <label for="manualArabic" style="margin-bottom:0;">Arabic script</label>
+              <label for="manualArabic" style="margin-bottom:0;">Arabic script <span class="optional-tag">(optional)</span></label>
               <button type="button" class="lookup-btn" id="lookupBtn">🔎 Find online</button>
             </div>
             <input type="text" id="manualArabic" class="input" placeholder="e.g. لَيْلَى" dir="rtl" style="font-size:19px;margin-bottom:12px;">
             <div id="meaningFieldWrap">
-              <label for="manualMeaning">Meaning of this name</label>
+              <label for="manualMeaning">Meaning of this name <span class="optional-tag">(optional)</span></label>
               <textarea id="manualMeaning" class="input" rows="2" placeholder="e.g. Night, Dark Beauty"></textarea>
             </div>
-            <p class="hint" id="lookupHint">We couldn't find this name in our library. Tap "Find online" to search for its Arabic script and meaning, or enter them yourself — please double-check the result before adding to cart, since it's printed exactly as shown.</p>
+            <p class="hint" id="lookupHint">We couldn't find this name in our library. Tap "Find online" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart, since it's printed exactly as shown.</p>
           </div>
 
           <div class="price-row">
@@ -936,12 +937,9 @@
 
   function updateAddBtnState(){
     var typed = nameInput.value.trim();
-    if(!typed){ addBtn.disabled = true; return; }
-    if(selectedMatch){ addBtn.disabled = false; return; }
-    var style = currentStyle();
-    var hasArabic = manualArabic.value.trim().length > 0;
-    var hasMeaning = manualMeaning.value.trim().length > 0;
-    addBtn.disabled = !hasArabic || (style === "arabic_and_meaning" && !hasMeaning);
+    // Arabic script and meaning are both optional for manually-entered
+    // names — only the name itself is required to add to cart.
+    addBtn.disabled = !typed;
   }
 
   function refreshFormState(){
@@ -1069,9 +1067,7 @@
     } else {
       var arabic = manualArabic.value.trim();
       var m = manualMeaning.value.trim();
-      if(!arabic){ formMsg.textContent = "Please add the Arabic script for this name."; formMsg.className = "form-msg error"; return; }
-      if(style === "arabic_and_meaning" && !m){ formMsg.textContent = "Please add a meaning, or switch to \"Arabic Script Only\"."; formMsg.className = "form-msg error"; return; }
-      entry = {name:typed, arabic:arabic, meaning: m || "", style:style, color:color, price:PRICE, id: Date.now()+Math.random()};
+      entry = {name:typed, arabic: arabic || "✦", meaning: m, style:style, color:color, price:PRICE, id: Date.now()+Math.random()};
     }
     cart.push(entry);
     formMsg.textContent = "Added \""+entry.name+"\" to your cart.";
@@ -1082,7 +1078,7 @@
     manualArabic.value = "";
     manualMeaning.value = "";
     manualField.hidden = true;
-    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or enter them yourself — please double-check the result before adding to cart, since it's printed exactly as shown.";
+    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart, since it's printed exactly as shown.";
     var defaultStyleRadio = document.querySelector('input[name="frameStyle"][value="arabic_and_meaning"]');
     if(defaultStyleRadio) defaultStyleRadio.checked = true;
     meaningFieldWrap.hidden = false;
@@ -1129,7 +1125,7 @@
     cartBody.innerHTML = cart.map(function(item){
       var styleLabel = item.style === "arabic_only" ? "Arabic script only" : "Arabic + meaning";
       var colorLabel = FRAME_COLOR_LABELS[item.color] || "White";
-      var meaningLine = item.style === "arabic_only" ? "" : '<div class="ci-meaning">'+item.meaning+'</div>';
+      var meaningLine = (item.style === "arabic_only" || !item.meaning) ? "" : '<div class="ci-meaning">'+item.meaning+'</div>';
       return '<div class="cart-item" data-id="'+item.id+'">'+
         '<div class="ci-arabic">'+item.arabic+'</div>'+
         '<div class="ci-info">'+

@@ -23,13 +23,12 @@ function validateOrderPayload(body) {
   if (!Array.isArray(body.items) || body.items.length === 0) {
     errors.push("Order must include at least one name.");
   } else {
+    // Arabic script and meaning are both optional — only the name itself
+    // is required. A missing Arabic script is filled with a "✦" placeholder
+    // below, which flags in the order record that it still needs sourcing
+    // before this one goes to print.
     body.items.forEach((item, i) => {
       if (!item.name || !String(item.name).trim()) errors.push(`Item ${i + 1} is missing a name.`);
-      if (!item.arabic || !String(item.arabic).trim()) errors.push(`Item ${i + 1} is missing its Arabic script.`);
-      const style = item.style === "arabic_only" ? "arabic_only" : "arabic_and_meaning";
-      if (style === "arabic_and_meaning" && (!item.meaning || !String(item.meaning).trim())) {
-        errors.push(`Item ${i + 1} is missing a meaning (or should be set to Arabic script only).`);
-      }
     });
   }
   const c = body.customer || {};
