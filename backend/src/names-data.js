@@ -73,6 +73,8 @@ const NAME_DB = [
   { name: "Bilqees", arabic: "بِلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
   { name: "Bilkis", arabic: "بِلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
   { name: "Balikis", arabic: "بَلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
+  { name: "Firdaws", arabic: "فِرْدَوْس", meaning: "Garden of Paradise " },
+  { name: "Firdaus", arabic: "فِرْدَوْس", meaning: "Garden of Paradise " },
 
   // --- "Servant of Allah" (Abd-) names ---
   { name: "Abdullah", arabic: "عَبْدُ اللّٰهِ", meaning: "Servant of Allah" },
