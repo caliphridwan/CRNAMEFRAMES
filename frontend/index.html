@@ -443,6 +443,7 @@
           <div class="arch-meaning">Praiseworthy, One who is constantly praised.</div>
           <div class="divider"><span class="stem"></span><span class="dots"><span></span><span></span><span></span></span><span class="stem"></span></div>
           <div class="arch-brandline">CALIPH · RIDWAN</div>
+          <div class="arch-brandline">NB: Frame above is just a placeholder of the original well-crafted frame.</div>
         </div> 
       </div>
     </div>
@@ -1037,7 +1038,7 @@
       }
       if(data.arabic && !manualArabic.value.trim()) manualArabic.value = data.arabic;
       if(data.meaning && !manualMeaning.value.trim()) manualMeaning.value = data.meaning;
-      lookupHint.innerHTML = "Suggested from the web (" + (data.sourceLabel || "online search") + ") — please review before adding to cart, since it's printed exactly as shown." +
+      lookupHint.innerHTML = "Suggested from the web (" + (data.sourceLabel || "online search") + ") — please review and edit where necesssary." +
         (data.sourceUrl ? ' <a href="'+data.sourceUrl+'" target="_blank" rel="noopener">Source ↗</a>' : "");
       updateAddBtnState();
       updatePreview();
@@ -1078,11 +1079,11 @@
     manualArabic.value = "";
     manualMeaning.value = "";
     manualField.hidden = true;
-    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart, since it's printed exactly as shown.";
+    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or add them yourself — both are optional and our system would add it before proceeding to printing the original well-crafted frames.";
     var defaultStyleRadio = document.querySelector('input[name="frameStyle"][value="arabic_and_meaning"]');
     if(defaultStyleRadio) defaultStyleRadio.checked = true;
     meaningFieldWrap.hidden = false;
-    styleHint.textContent = "The English name and meaning are calligraphed onto the frame beneath the Arabic.";
+    styleHint.textContent = "The English name and/or meaning are calligraphed onto the frame beneath the Arabic.";
     selectedMatch = null;
     addBtn.disabled = true;
     updatePreview();
