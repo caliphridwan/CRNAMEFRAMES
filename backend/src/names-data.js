@@ -75,6 +75,8 @@ const NAME_DB = [
   { name: "Balikis", arabic: "بَلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
   { name: "Firdaws", arabic: "فِرْدَوْس", meaning: "Garden of Paradise " },
   { name: "Firdaus", arabic: "فِرْدَوْس", meaning: "Garden of Paradise " },
+  { name: "Siraj", arabic: "سراج", meaning: "Illuminating Lamp, Light " },
+  { name: "Suraj", arabic: "سراج", meaning: "Illuminating Lamp, Light " },
 
   // --- "Servant of Allah" (Abd-) names ---
   { name: "Abdullah", arabic: "عَبْدُ اللّٰهِ", meaning: "Servant of Allah" },
