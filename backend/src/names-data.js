@@ -69,10 +69,10 @@ const NAME_DB = [
   { name: "Zulaikha", arabic: "زُلَيْخَا", meaning: "A name traditionally linked to the account of Prophet Yusuf" },
   { name: "Nusaybah", arabic: "نُسَيْبَةُ", meaning: "Of Noble Lineage — a female companion known for bravery in battle" },
   { name: "Imran", arabic: "عِمْرَانُ", meaning: "Prosperity, Long Life — father of Maryam, honoured with a chapter of the Qur'an" },
-  { name: "Balqees", arabic: "بلقيس", meaning: "Beautiful, Wealthy Queen " },
-  { name: "Bilqees", arabic: "بلقيس", meaning: "Beautiful, Wealthy Queen " },
-  { name: "Bilkis", arabic: "بلقيس", meaning: "Beautiful, Wealthy Queen " },
-  { name: "Balikis", arabic: "بلقيس", meaning: "Beautiful, Wealthy Queen " },
+  { name: "Balqees", arabic: "بَلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
+  { name: "Bilqees", arabic: "بِلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
+  { name: "Bilkis", arabic: "بِلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
+  { name: "Balikis", arabic: "بَلْقِيسُ", meaning: "Beautiful, Wealthy Queen " },
 
   // --- "Servant of Allah" (Abd-) names ---
   { name: "Abdullah", arabic: "عَبْدُ اللّٰهِ", meaning: "Servant of Allah" },
