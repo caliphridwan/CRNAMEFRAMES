@@ -190,40 +190,15 @@
   .slide{flex:0 0 auto;width:230px;scroll-snap-align:start;}
   @media (max-width:520px){ .slide{width:198px;} }
 
-  .mini-arch{
-    position:relative;border-radius:80px 80px 5px 5px / 56px 56px 5px 5px;padding:4px;
-    box-shadow:0 18px 34px -18px rgba(23,58,46,.4);
+  /* real photographed/rendered frame cards */
+  .photo-card{
+    border-radius:10px;overflow:hidden;background:#fff;
+    box-shadow:0 18px 34px -18px rgba(23,58,46,.4);border:1px solid var(--line);
   }
-  .mini-arch.ivory{background:linear-gradient(180deg,#fff,#F2ECDD);}
-  .mini-arch.emerald{background:linear-gradient(160deg,#0e2b20,#1d4433);}
-  .mini-arch-inner{
-    position:relative;
-    border-radius:76px 76px 3px 3px / 52px 52px 3px 3px;
-    padding:34px 16px 22px;text-align:center;background:#FBF9F3;
-  }
-  .mini-arch.ivory .mini-arch-inner{border:1px solid var(--gold-light);}
-  .mini-arch.emerald .mini-arch-inner{border:1px solid #C9A94E;}
-  /* small gold diamond corner accents to echo the emerald frame's motif */
-  .mini-arch.emerald::before,.mini-arch.emerald::after{
-    content:"";position:absolute;width:9px;height:9px;background:var(--gold);
-    transform:rotate(45deg);top:10px;
-  }
-  .mini-arch.emerald::before{left:10px;}
-  .mini-arch.emerald::after{right:10px;}
-
-  /* decorative rose clusters in the lower corners — echoes the rose
-     garlands from the reference frame designs, in miniature. */
-  .mini-flower{position:absolute;bottom:5px;width:25px;height:25px;opacity:.92;pointer-events:none;}
-  .mini-flower svg{width:100%;height:100%;display:block;}
-  .mini-flower-left{left:3px;}
-  .mini-flower-right{right:3px;transform:scaleX(-1);}
-
-  .mini-arch-arabic{font-size:26px;color:var(--gold);margin-bottom:6px;line-height:1;}
-  .mini-arch-name{font-family:'Playfair Display',serif;font-weight:700;font-size:17px;letter-spacing:.02em;color:var(--green);text-transform:uppercase;}
-  .mini-arch-meaning{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4;}
-  .mini-arch-style-tag{
-    display:inline-block;margin-top:12px;font-size:9.5px;letter-spacing:.12em;font-weight:700;
-    color:var(--gold);border-top:1px solid var(--gold-light);padding-top:8px;
+  .photo-card img{display:block;width:100%;height:auto;aspect-ratio:900/1273;object-fit:cover;background:var(--ivory-deep);}
+  .photo-card-tag{
+    padding:9px 10px;text-align:center;font-size:9.5px;letter-spacing:.12em;font-weight:700;
+    color:var(--gold);background:var(--card);border-top:1px solid var(--gold-light);
   }
 
   .slider-nav{
@@ -438,12 +413,11 @@
       </div>
       <div class="arch-shell">
         <div class="arch-inner">
-          <div class="arch-arabic">مُحَمَّدُ</div>
+          <div class="arch-arabic">مُحَمَّد</div>
           <div class="arch-name">Muhammad</div>
           <div class="arch-meaning">Praiseworthy, One who is constantly praised.</div>
           <div class="divider"><span class="stem"></span><span class="dots"><span></span><span></span><span></span></span><span class="stem"></span></div>
           <div class="arch-brandline">CALIPH · RIDWAN</div>
-          <div class="mini-arch-meaning">NB: This frame is ONLY a placeholder of the original well-designed frame.</div>
         </div> 
       </div>
     </div>
@@ -501,10 +475,7 @@
               <div class="arch-meaning" id="prevMeaning">Its meaning will appear here</div>
               <div class="divider"><span class="stem"></span><span class="dots"><span></span><span></span><span></span></span><span class="stem"></span></div>
               <div class="arch-brandline">CALIPH · RIDWAN</div>
-              <div class="mini-arch-meaning"> NB: This frame is ONLY a placeholder of the original well-designed frame.</div>
-
             </div>
-           
           </div>
         </div>
 
@@ -553,7 +524,7 @@
               <label for="manualMeaning">Meaning of this name <span class="optional-tag">(optional)</span></label>
               <textarea id="manualMeaning" class="input" rows="2" placeholder="e.g. Night, Dark Beauty"></textarea>
             </div>
-            <p class="hint" id="lookupHint">We couldn't find this name in our library. Tap "Find online" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart.</p>
+            <p class="hint" id="lookupHint">We couldn't find this name in our library. Tap "Find online" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart, since it's printed exactly as shown.</p>
           </div>
 
           <div class="price-row">
@@ -775,48 +746,36 @@
   var sliderPrev = document.getElementById("sliderPrev");
   var sliderNext = document.getElementById("sliderNext");
 
-  // Showcases both frame styles side by side. Falls back gracefully if a
-  // name isn't present yet (e.g. before the API's name list has loaded).
+  // Real photos of finished frame designs. Add a new {name, style, image}
+  // entry here whenever a new photo is ready — "image" is a filename
+  // inside frontend/images/. The name+style still borrow their meaning
+  // and Arabic script from NAME_DB for the alt text, so nothing else
+  // needs to change when this list grows.
   var GALLERY_PICKS = [
-    {name:"Luqman", style:"ivory"},
-    {name:"Fatimah", style:"ivory"},
-    {name:"Ganiyu", style:"emerald"},
-    {name:"Rahma", style:"emerald"},
-    {name:"Yusuf", style:"ivory"},
-    {name:"Zainab", style:"emerald"}
+    {name:"Luqman", style:"ivory", image:"luqman.jpg"},
+    {name:"Fatimah", style:"ivory", image:"fatimah.jpg"},
+    {name:"Ganiyu", style:"emerald", image:"ganiyu.jpg"},
+    {name:"Rahma", style:"emerald", image:"rahma.jpg"}
   ];
-
-  // Small inline SVG ornament — a rose cluster in each lower corner,
-  // echoing the motif from the reference frame designs in miniature.
-  var FLOWER_SVG = '<svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">'+
-    '<circle cx="17" cy="10" r="4" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
-    '<circle cx="11" cy="14" r="3.6" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
-    '<circle cx="23" cy="14" r="3.6" fill="#fff" stroke="#E7DCCB" stroke-width="0.6"/>'+
-    '<circle cx="14" cy="17" r="3.2" fill="#fdfaf3"/>'+
-    '<circle cx="20" cy="17" r="3.2" fill="#fdfaf3"/>'+
-    '<circle cx="17" cy="15" r="2.6" fill="#E7DCCB"/>'+
-    '<path d="M17 20 L17 29" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
-    '<path d="M17 23 Q11.5 23.5 9.5 28" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
-    '<path d="M17 25 Q22.5 25.5 24.5 29.5" stroke="#8a9a78" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
-  '</svg>';
 
   function renderGallery(){
     var picks = GALLERY_PICKS.map(function(g){
       var found = NAME_DB.find(function(n){ return n.name.toLowerCase() === g.name.toLowerCase(); });
-      return found ? {name:found.name, arabic:found.arabic, meaning:found.meaning, styleVariant:g.style} : null;
-    }).filter(Boolean);
+      return {
+        name: g.name,
+        meaning: found ? found.meaning : "",
+        styleVariant: g.style,
+        image: g.image
+      };
+    });
 
     galleryStrip.innerHTML = picks.map(function(n){
       var label = n.styleVariant === "emerald" ? "EMERALD GOLD" : "IVORY CLASSIC";
-      return '<div class="slide"><div class="mini-arch '+n.styleVariant+'">'+
-        '<div class="mini-arch-inner">'+
-          '<span class="mini-flower mini-flower-left">'+FLOWER_SVG+'</span>'+
-          '<span class="mini-flower mini-flower-right">'+FLOWER_SVG+'</span>'+
-          '<div class="mini-arch-arabic">'+n.arabic+'</div>'+
-          '<div class="mini-arch-name">'+n.name+'</div>'+
-          '<div class="mini-arch-meaning">'+n.meaning+'</div>'+
-          '<div class="mini-arch-style-tag">'+label+'</div>'+
-        '</div></div></div>';
+      var alt = n.name + (n.meaning ? " — " + n.meaning : "") + " name frame, " + label.toLowerCase() + " style";
+      return '<div class="slide"><div class="photo-card">'+
+          '<img src="images/'+n.image+'" alt="'+alt+'" loading="lazy">'+
+          '<div class="photo-card-tag">'+label+'</div>'+
+        '</div></div>';
     }).join("");
 
     buildDots(picks.length);
@@ -1041,7 +1000,7 @@
       }
       if(data.arabic && !manualArabic.value.trim()) manualArabic.value = data.arabic;
       if(data.meaning && !manualMeaning.value.trim()) manualMeaning.value = data.meaning;
-      lookupHint.innerHTML = "Suggested from the web (" + (data.sourceLabel || "online search") + ") — please review and edit where necesssary." +
+      lookupHint.innerHTML = "Suggested from the web (" + (data.sourceLabel || "online search") + ") — please review before adding to cart, since it's printed exactly as shown." +
         (data.sourceUrl ? ' <a href="'+data.sourceUrl+'" target="_blank" rel="noopener">Source ↗</a>' : "");
       updateAddBtnState();
       updatePreview();
@@ -1082,11 +1041,11 @@
     manualArabic.value = "";
     manualMeaning.value = "";
     manualField.hidden = true;
-    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or add them yourself — both are optional and our system would add it before proceeding to printing the original well-crafted frames.";
+    lookupHint.textContent = "We couldn't find this name in our library. Tap \"Find online\" to search for its Arabic script and meaning, or add them yourself — both are optional, but please double-check anything you enter before adding to cart, since it's printed exactly as shown.";
     var defaultStyleRadio = document.querySelector('input[name="frameStyle"][value="arabic_and_meaning"]');
     if(defaultStyleRadio) defaultStyleRadio.checked = true;
     meaningFieldWrap.hidden = false;
-    styleHint.textContent = "The English name and/or meaning are calligraphed onto the frame beneath the Arabic.";
+    styleHint.textContent = "The English name and meaning are calligraphed onto the frame beneath the Arabic.";
     selectedMatch = null;
     addBtn.disabled = true;
     updatePreview();
