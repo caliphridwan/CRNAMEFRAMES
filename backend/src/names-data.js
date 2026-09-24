@@ -106,6 +106,7 @@ const NAME_DB = [
   { name: "Abdulqadir", arabic: "عَبْدُ الْقَادِرِ", meaning: "Servant of the All-Capable, the All-Powerful" },
   { name: "Abdulmuiz", arabic: "عَبْدُ الْمُعِزِّ", meaning: "Servant of the Bestower of Honour" },
   { name: "Kifayah", arabic: "كِفايَةُ ", meaning: "Contentment,Sufficiency, Adequacy" },
+  { name: "Kafayah", arabic: "كِفايَةُ ", meaning: "Contentment,Sufficiency, Adequacy" },
 
   // --- Virtue, attribute & meaning-based names ---
   { name: "Rahma", arabic: "رَحْمَةُ", meaning: "Mercy, Compassion from Allah" },
