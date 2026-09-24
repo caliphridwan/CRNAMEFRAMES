@@ -107,6 +107,9 @@ const NAME_DB = [
   { name: "Abdulmuiz", arabic: "عَبْدُ الْمُعِزِّ", meaning: "Servant of the Bestower of Honour" },
   { name: "Kifayah", arabic: "كِفايَةُ ", meaning: "Contentment,Sufficiency, Adequacy" },
   { name: "Kafayah", arabic: "كِفايَةُ ", meaning: "Contentment,Sufficiency, Adequacy" },
+  { name: "Khairah", arabic: "خَيْرَاتٌ ", meaning: "Good deeds, Blessings, Bounties" },
+  { name: "Khayrat", arabic: "خَيْرَاتٌ ", meaning: "Good deeds, Blessings, Bounties" },
+  { name: "Aakifah", arabic: "عَاكِفَةُ ", meaning: "One devoted in worship to Allah" },
 
   // --- Virtue, attribute & meaning-based names ---
   { name: "Rahma", arabic: "رَحْمَةُ", meaning: "Mercy, Compassion from Allah" },
